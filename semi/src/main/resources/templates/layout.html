@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>KH CoinComunity</title>
+  <link rel="icon" th:href="@{/img/favicon.png}">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}">
+  <!-- animate CSS -->
+  <link rel="stylesheet" type="text/css" th:href="@{/css/animate.css}">
+  <!-- owl carousel CSS -->
+  <link rel="stylesheet" type="text/css" th:href="@{/css/owl.carousel.min.css}">
+  <!-- themify CSS -->
+  <link rel="stylesheet" type="text/css" th:href="@{/css/themify-icons.css}">
+  <!-- flaticon CSS -->
+  <link rel="stylesheet" type="text/css" th:href="@{/css/flaticon.css}">
+  <!-- fontawesome CSS -->
+  <link rel="stylesheet" type="text/css" th:href="@{/fontawesome/css/all.min.css}">
+  <!-- magnific CSS -->
+  <link rel="stylesheet" type="text/css" th:href="@{/css/magnific-popup.css}">
+  <link rel="stylesheet" type="text/css" th:href="@{/css/gijgo.min.css}">
+  <!-- niceselect CSS -->
+  <link rel="stylesheet" type="text/css" th:href="@{/css/nice-select.css}">
+  <!-- slick CSS -->
+  <link rel="stylesheet" type="text/css" th:href="@{/css/slick.css}">
+  <!-- style CSS -->
+  <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!-- 헤더 -->
+<header th:replace="~{header :: headerFragment}"></header>
+
+<!-- 기본 템플릿 안에 삽입될 내용 Start -->
+<th:block layout:fragment="content"></th:block>
+<!-- 기본 템플릿 안에 삽입될 내용 End -->
+
+<!-- 푸터 -->
+<footer th:replace="~{footer :: footerFragment}"></footer>
+
+<!-- jquery plugins here-->
+<script th:src="@{/js/jquery-1.12.1.min.js}"></script>
+<!-- popper js -->
+<script th:src="@{/js/popper.min.js}"></script>
+<!-- bootstrap js -->
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<!-- magnific js -->
+<script th:src="@{/js/jquery.magnific-popup.js}"></script>
+<!-- swiper js -->
+<script th:src="@{/js/owl.carousel.min.js}"></script>
+<!-- masonry js -->
+<script th:src="@{/js/masonry.pkgd.js}"></script>
+<!-- masonry js -->
+<script th:src="@{/js/jquery.nice-select.min.js}"></script>
+<script th:src="@{/js/gijgo.min.js}"></script>
+<!-- contact js -->
+<script th:src="@{/js/jquery.ajaxchimp.min.js}"></script>
+<script th:src="@{/js/jquery.form.js}"></script>
+<script th:src="@{/js/jquery.validate.min.js}"></script>
+<script th:src="@{/js/mail-script.js}"></script>
+<script th:src="@{/js/contact.js}"></script>
+<!-- custom js -->
+<script th:src="@{/js/custom.js}"></script>
+</body>
+</html>

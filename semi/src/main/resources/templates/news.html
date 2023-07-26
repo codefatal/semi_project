@@ -1,0 +1,15 @@
+<html layout:decorate="~{layout}">
+  <div layout:fragment="content" class="container">
+    <div>
+      <table class= "table">
+        <tr>
+          <th>제목</th>
+        </tr>
+        <tr th:each="news : ${news}">
+          <td><a th:href="${news.url}"><p th:text="${news.time}"></p>
+            <span th:text="${news.subject}"></span></a></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</html>
