@@ -27,6 +27,9 @@
                 <li class="nav-item">
                   <a class="nav-link" href="/crytomarket">코인 등락폭 정보</a>
                 </li>
+                <li class="nav-item">
+                  <a class="nav-link" sec:authorize="isAuthenticated()" href="/crytotest">모의투자</a>
+                </li>
               </ul>
             </div>
             <a th:href="@{/user/login}" sec:authorize="isAnonymous()" class="btn_1 d-none d-lg-block">로그인</a>

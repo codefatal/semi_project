@@ -20,4 +20,9 @@ public class CrytoContoller {
     public String crytoMarket() {
         return "crytomarket";
     }
+
+    @GetMapping("/crytotest")
+    public String crytoTest() {
+        return "crytotest";
+    }
 }
