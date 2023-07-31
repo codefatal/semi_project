@@ -21,8 +21,8 @@ public class CrytoContoller {
         return "crytomarket";
     }
 
-    @GetMapping("/crytotest")
-    public String crytoTest() {
-        return "crytotest";
+    @GetMapping("/trade")
+    public String trade() {
+    	return "trade";
     }
 }

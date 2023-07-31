@@ -9,7 +9,7 @@ import com.solo.semi.model.Prices;
 
 @Repository
 public interface PricesRepository extends CrudRepository<Prices, Integer>{
-	List<Prices> findFirst10ByCoincodeOrderbyDateDesc(String Coincode);
+	List<Prices> findFirst10ByCoincodeOrderByDateDesc(String coincode);
 	
-	Long countByCoincode(String Coincode); // 코인별 데이터 수 조회 
+	Long countByCoincode(String coincode); // 코인별 데이터 수 조회 
 }

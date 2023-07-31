@@ -1,0 +1,496 @@
+ul {
+    list-style: none;
+}
+
+/* check */
+.BuySellTab {
+    min-height: 500px;
+    padding-top: 13px
+}
+
+/* check */
+.BuySellTab .BuySellTab_row {
+    display: flex;
+    justify-content: flex-end;
+    padding: 7px 0;
+    position: relative
+}
+
+/* check */
+.BuySellTab .BuySellTab_tabbox {
+    flex: 1 1;
+    max-width: 258px
+}
+
+/* check */
+.BuySellTab_available-price {
+    color: #444;
+    display: block;
+    font-size: 14px;
+    line-height: 20px
+}
+
+/* check */
+.BuySellTab_available-symbol {
+    color: #000;
+    font-size: 12px;
+    line-height: 20px;
+    margin-left: 4px;
+    vertical-align: top
+}
+
+/* check */
+.OrderForm_qty-per {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 3px
+}
+
+/* check */
+.OrderForm_qty-per .OrderForm_qty-per_btn {
+    background-color: transparent;
+    border: 1px solid #d1d5d7;
+    border-radius: 4px;
+    color: #444;
+    flex: 0 0 63px;
+    font-size: 14px;
+    height: 36px;
+    line-height: 18px;
+    max-width: 63px;
+    padding: 8px 10px 10px;
+    text-align: center
+}
+
+/* check */
+.OrderForm_qty-per .OrderForm_qty-per_btn:hover {
+    background-color: #fff8ec;
+    border-color: #ff8435
+}
+
+/* check */
+.OrderForm_qty-per .OrderForm_qty-per_btn+.OrderForm_qty-per_btn {
+    margin-left: 2px
+}
+
+/* check */
+.InputNumeric_buy_sell input {
+    text-align: left!important
+}
+
+/* check */
+.InputNumeric_btn {
+    border-left: 1px solid #d1d5d7;
+    min-width: 28px;
+    position: relative;
+    width: 28px
+}
+
+/* check */
+.InputNumeric_buy_sell:hover .InputNumeric_btn {
+    border-color: #ff8435!important
+}
+
+/* check */
+.InputNumeric_btn .InputNumeric_btn_minus,.InputNumeric_btn .InputNumeric_btn_plus {
+    height: 17px;
+    left: 0;
+    position: absolute;
+    width: 100%
+}
+
+/* check */
+.InputNumeric_btn .InputNumeric_btn_minus:before,.InputNumeric_btn .InputNumeric_btn_plus:before {
+    border: 1px solid #afafaf;
+    content: "";
+    display: inline-block;
+    height: 5px;
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+    vertical-align: top;
+    width: 5px
+}
+
+/* check */
+.InputNumeric_btn .InputNumeric_btn_minus {
+    bottom: 0
+}
+
+/* check */
+.InputNumeric_btn .InputNumeric_btn_minus:before {
+    border-right: 0;
+    border-top: 0;
+    margin-top: 5px
+}
+
+/* check */
+.InputNumeric_btn .InputNumeric_btn_plus {
+    border-bottom: 1px solid #d1d5d7;
+    height: 18px;
+    top: 0
+}
+
+/* check */
+.InputNumeric_buy_sell:hover .InputNumeric_btn .InputNumeric_btn_plus {
+    border-color: #ff8435!important
+}
+
+/* check */
+.InputNumeric_btn .InputNumeric_btn_plus:before {
+    border-bottom: 0;
+    border-left: 0;
+    margin-top: 7px
+}
+
+/* check */
+.Orders {
+    margin-left: 40px;
+    width: 320px
+}
+
+/* check */
+.Orders_tablist {
+    border-bottom: 1px solid #eee;
+    display: flex
+}
+
+/* check */
+.Orders_tablist .Orders_tabitem {
+    flex: 1 1
+}
+
+/* check */
+.Orders_tablist .Orders_tabbtn {
+    color: #a4a4a4;
+    font-size: 14px;
+    line-height: 20px;
+    padding: 7px 10px 9px;
+    position: relative;
+    width: 100%
+}
+
+/* check */
+.Orders_tablist .Orders_tabbtn:hover {
+    color: gray
+}
+
+/* check */
+.Orders_tablist .Orders_tabitem[aria-selected=true] {
+    font-weight: 500
+}
+
+/* check */
+.Orders_tablist .Orders_tabitem[aria-selected=true] .Orders_tabbtn:after {
+    bottom: -1px;
+    content: "";
+    height: 3px;
+    left: 0;
+    position: absolute;
+    width: 100%;
+    z-index: 10
+}
+
+/* check */
+.Orders_tablist .Orders_tabitem[aria-selected=true]:first-child .Orders_tabbtn {
+    color: #f75467
+}
+
+/* check */
+.Orders_tablist .Orders_tabitem[aria-selected=true]:first-child .Orders_tabbtn:after {
+    background-color: #f75467
+}
+
+/* check */
+.Orders_tablist .Orders_tabitem[aria-selected=true]:last-child .Orders_tabbtn {
+    color: #4386f9
+}
+
+/* check */
+.Orders_tablist .Orders_tabitem[aria-selected=true]:last-child .Orders_tabbtn:after {
+    background-color: #4386f9
+}
+
+.ButtonRow {
+    display: flex;
+    margin-top: 40px;
+}
+
+.ButtonRow .Button_row_buy {
+    background-color: #f75467;
+    color: #fff;
+}
+
+.ButtonRow .Button_row_sell {
+    background-color: #5486f1;
+    color: #fff;
+}
+
+.Button_JtY {
+    align-items: center;
+    border: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex: 1 1;
+    justify-content: center;
+    margin: 0;
+    padding: 3px 8px 2px;
+    position: relative;
+    word-break: break-all
+}
+
+.Button_JtY {
+    border-radius: 4px;
+    font-size: 15px;
+    height: 48px;
+    line-height: 21px
+}
+
+.Button_JtY .Button_text {
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    display: -webkit-box;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis
+}
+
+.Button_JtY:hover {
+    text-decoration: none
+}
+
+.Button_JtY:active {
+    background-color: #3d414b;
+    color: #fff
+}
+
+@font-face {
+    font-display: swap;
+    font-family: Spoqa Han Sans Neo;
+    font-weight: 200;
+    src: local("Spoqa Han Sans Neo Thin"),local("SpoqaHanSansNeo-Thin"),url(https://content.bithumb.com/resources/fonts/spoqa/SpoqaHanSansNeo-Thin.woff2) format("woff2"),url(https://content.bithumb.com/resources/fonts/spoqa/SpoqaHanSansNeo-Thin.woff) format("woff")
+}
+
+@font-face {
+    font-display: swap;
+    font-family: Spoqa Han Sans Neo;
+    font-weight: 300;
+    src: local("Spoqa Han Sans Neo Light"),local("SpoqaHanSansNeo-Light"),url(https://content.bithumb.com/resources/fonts/spoqa/SpoqaHanSansNeo-Light.woff2) format("woff2"),url(https://content.bithumb.com/resources/fonts/spoqa/SpoqaHanSansNeo-Light.woff) format("woff")
+}
+
+@font-face {
+    font-display: swap;
+    font-family: Spoqa Han Sans Neo;
+    font-weight: 400;
+    src: local("Spoqa Han Sans Neo Regular"),local("SpoqaHanSansNeo-Regular"),url(https://content.bithumb.com/resources/fonts/spoqa/SpoqaHanSansNeo-Regular.woff2) format("woff2"),url(https://content.bithumb.com/resources/fonts/spoqa/SpoqaHanSansNeo-Regular.woff) format("woff")
+}
+
+@font-face {
+    font-display: swap;
+    font-family: Spoqa Han Sans Neo;
+    font-weight: 500;
+    src: local("Spoqa Han Sans Neo Medium"),local("SpoqaHanSansNeo-Medium"),url(https://content.bithumb.com/resources/fonts/spoqa/SpoqaHanSansNeo-Medium.woff2) format("woff2"),url(https://content.bithumb.com/resources/fonts/spoqa/SpoqaHanSansNeo-Medium.woff) format("woff")
+}
+
+@font-face {
+    font-display: swap;
+    font-family: Spoqa Han Sans Neo;
+    font-weight: 700;
+    src: local("Spoqa Han Sans Neo Bold"),local("SpoqaHanSansNeo-Bold"),url(https://content.bithumb.com/resources/fonts/spoqa/SpoqaHanSansNeo-Bold.woff2) format("woff2"),url(https://content.bithumb.com/resources/fonts/spoqa/SpoqaHanSansNeo-Bold.woff) format("woff")
+}
+
+@font-face {
+    font-display: swap;
+    font-family: Bithumb Trading Sans;
+    font-weight: 400;
+    src: local("Bithumb Trading Sans Regular"),local("BithumbTradingSans-Regular"),url(https://content.bithumb.com/resources/fonts/bts/BithumbTradingSansPC-Regular.woff2) format("woff2")
+}
+
+@font-face {
+    font-display: swap;
+    font-family: Bithumb Trading Sans;
+    font-weight: 500;
+    src: local("Bithumb Trading Sans Medium"),local("BithumbTradingSans-Medium"),url(https://content.bithumb.com/resources/fonts/bts/BithumbTradingSansPC-Medium.woff2) format("woff2")
+}
+
+@font-face {
+    font-display: swap;
+    font-family: Bithumb Trading Sans;
+    font-weight: 600;
+    src: local("Bithumb Trading Sans Semibold"),local("BithumbTradingSans-Semibold"),url(https://content.bithumb.com/resources/fonts/bts/BithumbTradingSansPC-Semibold.woff2) format("woff2")
+}
+
+@font-face {
+    font-display: swap;
+    font-family: Bithumb Trading Sans;
+    font-weight: 700;
+    src: local("Bithumb Trading Sans Bold"),local("BithumbTradingSans-Bold"),url(https://content.bithumb.com/resources/fonts/bts/BithumbTradingSansPC-Bold.woff2) format("woff2")
+}
+
+@font-face {
+    font-display: swap;
+    font-family: DMSans;
+    font-weight: 700;
+    src: local("DMSans Bold Italic"),local("DMSans-BoldItalic"),url(https://content.bithumb.com/resources/fonts/dmSans/DMSans-BoldItalic.woff2) format("woff2");
+    unicode-range: u+0030-0039
+}
+
+a,abbr,acronym,address,applet,article,aside,audio,b,big,blockquote,body,button,canvas,caption,center,cite,code,dd,del,details,dfn,div,dl,dt,em,embed,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,hgroup,html,i,iframe,img,input,ins,kbd,label,legend,li,mark,menu,nav,object,ol,output,p,pre,q,ruby,s,samp,section,select,small,span,strike,strong,sub,summary,sup,table,tbody,td,tfoot,th,thead,time,tr,tt,u,ul,var,video {
+    font-family: Bithumb Trading Sans,Arial,Malgun Gothic,sans-serif;
+    font-size: inherit;
+    font-style: normal;
+    font-weight: 400;
+    margin: 0;
+    padding: 0
+}
+
+html {
+    -webkit-text-size-adjust: none
+}
+
+body,html {
+    height: 100%
+}
+
+body {
+    box-sizing: border-box;
+    font-size: 14px;
+    letter-spacing: 0;
+    line-height: 1.2;
+    position: relative
+}
+
+address,body,em,i {
+    font-style: normal
+}
+
+fieldset,img {
+    border: 0
+}
+
+img {
+    vertical-align: top
+}
+
+ol,ul {
+    list-style: none
+}
+
+a {
+    color: inherit;
+    text-decoration: none
+}
+
+a:hover {
+    text-decoration: underline
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    table-layout: fixed;
+    width: 100%
+}
+
+caption,legend {
+    display: none
+}
+
+input,select,textarea {
+    background: none;
+    border: 0;
+    border-radius: 0;
+    vertical-align: middle
+}
+
+button {
+    background: none;
+    border: 0;
+    cursor: pointer;
+    outline: none
+}
+
+.blind {
+    clip: rect(0,0,0,0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    position: absolute;
+    width: 1px
+}
+
+.content-clear:after {
+    clear: both;
+    content: "";
+    display: table;
+    table-layout: fixed
+}
+
+.text-ellipsis {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap
+}
+
+.global-width {
+    margin: 0 auto;
+    width: 1200px
+}
+
+.InputBox_buy_sell {
+    border: 1px solid #d1d5d7;
+    border-radius: 4px;
+    display: flex;
+    flex: 1 1;
+    position: relative
+}
+
+.InputBox_buy_sell:hover {
+    border: 1px solid #ff8435!important
+}
+
+.InputBox_buy_sell .InputBox_wrap {
+    align-items: center;
+    display: flex;
+    flex: 1 1;
+    padding: 0 10px
+}
+
+.InputBox_buy_sell .InputBox_box {
+    align-items: center;
+    display: flex;
+    flex: 1 1
+}
+
+.InputBox_buy_sell .InputBox_box_input {
+    color: #444;
+    flex: 1 1;
+    font-size: 14px;
+    height: 33px;
+    line-height: 34px;
+    padding-top: 1px;
+    text-align: right;
+    width: 100%
+}
+
+.InputBox_buy_sell .InputBox_box_input::-webkit-input-placeholder {
+    color: #bbb
+}
+
+.InputBox_buy_sell .InputBox_sub-txt {
+    color: #a4a4a4;
+    font-size: 12px;
+    margin: 2px 0 0 5px
+}
+
+input {
+    -webkit-appearance: none;
+    outline: none
+}
+
+input::-webkit-input-placeholder {
+    font-weight: 400
+}
+
+input::-webkit-input-placeholder,input::placeholder {
+    font-weight: 400
+}

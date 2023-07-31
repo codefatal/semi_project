@@ -28,6 +28,10 @@
   <link rel="stylesheet" type="text/css" th:href="@{/css/slick.css}">
   <!-- style CSS -->
   <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
+  <!-- coin chart CSS -->
+  <link rel="stylesheet" type="text/css" th:href="@{/css/coin.css}">
+  <!-- 매수/매도 CSS -->
+  <link rel="stylesheet" type="text/css" th:href="@{/css/trade.css}">
 </head>
 <body>
 
@@ -64,5 +68,13 @@
 <script th:src="@{/js/contact.js}"></script>
 <!-- custom js -->
 <script th:src="@{/js/custom.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.2.2/dist/echarts.min.js"></script>
+<script th:src="@{/js/coin.js}"></script>
+<script>
+  $('.Orders_tabbtn').click(function(e){
+    e.preventDefault();
+    $(this).parents(".Orders_tabitem").attr("aria-selected", "true").siblings().attr("aria-selected","false");
+  });
+</script>
 </body>
 </html>

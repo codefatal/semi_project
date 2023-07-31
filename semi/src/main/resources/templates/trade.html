@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>거래</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/trade.css}">
+    <script th:src="@{/js/jquery-1.12.1.min.js}"></script>
+</head>
+<body>
+    <div class="Orders">
+        <ul class="Orders_tablist" role="tablist">
+            <li class="Orders_tabitem" role="tab" aria-selected="true"><button
+                    class="Orders_tabbtn">BTC 매수</button></li>
+            <li class="Orders_tabitem" role="tab" aria-selected="false"><button
+                    class="Orders_tabbtn">BTC 매도</button></li>
+        </ul>
+        <div class="BuySellTab">
+            <div class="BuySellTab_row">
+                <h4 class="BuySellTab_row_title">주문가능</h4>
+                <div class="BuySellTab_tabbox"><span
+                        class="BuySellTab_available-price">0 <em
+                            class="BuySellTab_available-symbol">원</em></span></div>
+                <div class="BuySellTab_tabbox"><span
+                        class="BuySellTab_available-price">0.00001239 <em
+                            class="BuySellTab_available-symbol">BTC</em></span></div>
+            </div>
+            <div class="OrderForm">
+                <div class="OrderForm_row">
+                    <h4 class="OrderForm_title">주문가격</h4>
+                    <div class="OrderForm_box">
+                        <div class="InputNumeric_buy_sell">
+                            <div
+                                class="InputBox_buy_sell InputBox_active InputBox_label">
+                                <div class="InputBox_wrap">
+                                    <div class="InputBox_box"><input
+                                            id="d3e7baf4-e41d-4899-944f-3c017daf0bd9" type="text" inputmode="numeric"
+                                            class="InputBox_box_input" autocapitalize="off" title="주문가격"
+                                            value="37,968,000"></div>
+                                </div>
+                                <div class="InputNumeric_btn"><button type="button"
+                                        class="InputNumeric_btn_minus"><span
+                                            class="blind">-</span></button><button type="button"
+                                        class="InputNumeric_btn_plus"><span
+                                            class="blind">+</span></button></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="OrderForm_row OrderForm_row_sub">
+                    <dl class="OrderForm_max-order">
+                        <dt>최대 주문 가능 수량</dt>
+                        <dd>0.0000</dd>
+                    </dl>
+                    <dl class="OrderForm_max-order">
+                        <dt>최대 매도 가능 금액</dt>
+                        <dd>470</dd>
+                    </dl>
+                </div>
+                <div class="OrderForm_row">
+                    <h4 class="OrderForm_title">주문수량</h4>
+                    <div class="OrderForm_box">
+                        <div class="InputBox_buy_sell">
+                            <div class="InputBox_wrap">
+                                <div class="InputBox_box"><input
+                                        id="4ae17e38-b0df-4708-863d-09ab17eb4ed1" type="text" inputmode="numeric"
+                                        class="InputBox_box_input" autocapitalize="off"
+                                        placeholder="최소 ≈ 0.0001" value=""><span
+                                        class="InputBox_sub-txt">BTC</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="OrderForm_qty-per"><button
+                        class="OrderForm_qty-per_btn">25%</button><button
+                        class="OrderForm_qty-per_btn">50%</button><button
+                        class="OrderForm_qty-per_btn">75%</button><button
+                        class="OrderForm_qty-per_btn">100%</button></div>
+                <div class="OrderForm_line"></div>
+                <div class="OrderForm_row">
+                    <h4 class="OrderForm_title">주문금액</h4>
+                    <div class="OrderForm_box">
+                        <div class="InputBox_buy_sell">
+                            <div class="InputBox_wrap">
+                                <div class="InputBox_box"><input
+                                        id="e3a9253c-d716-4bd6-ac82-186f9fde7c68" type="text" inputmode="numeric"
+                                        class="InputBox_box_input" autocapitalize="off"
+                                        placeholder="최소 금액 500" value=""><span
+                                        class="InputBox_sub-txt">원</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ButtonRow"><button
+                    class="Button_JtY Button_large Button_row_buy"><span
+                        class="Button_text">BTC 매수</span></button></div>
+            <div class="ButtonRow"><button
+                class="Button_JtY Button_large Button_row_sell"><span
+                    class="Button_text">BTC 매도</span></button></div>
+        </div>
+    </div>
+    <script>
+        $('.Orders_tabbtn').click(function(e){
+            e.preventDefault();
+            $(this).parents(".Orders_tabitem").attr("aria-selected", "true").siblings().attr("aria-selected","false");
+        });
+    </script>
+    
+</body>
+</html>

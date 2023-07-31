@@ -1,182 +1,119 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-<meta charset="UTF-8">
-<title>Coin Web</title>
-<style>
-	body{
-	background-color: #f4f4f4;
-	color: #484848;
-	font-weight: 500;
-	font-family: 나눔고딕,NanumGothic;
-	}
-	select{
-		color: #303030;
-		font-weight: 500;
-		font-family: 나눔고딕,NanumGothic;
-		font-size:medium;
-	}
-	#coinSelectDiv{
-		margin-top: 30px;
-		margin-right: 10px;
-		text-align: right;
-	}
-	table {
-	  border-collapse: collapse;
-	  border-spacing: 0;
-	  width: 100%;
-	  border: 1px solid #ddd;
-	  background-color: #ffffff;
-	  margin-top: 10px;
-	}
-	th, td {
-	  text-align: left;
-	  padding: 16px;
-	}
-	
-	tr:nth-child(even) {
-	  background-color: #f2f2f2;
-	}
-	#chart{
-		width: 100%;
-		height: 400px;
-		margin-top: 50px;
-		background-color: #fff;
-		padding-top: 30px;
-	}
-</style>
-<script src="https://cdn.jsdelivr.net/npm/echarts@5.2.2/dist/echarts.min.js"></script>
-<script type="text/javascript">
-	window.onload = function() {
-		priceAjax();
-		
-		document.getElementById("coinSelect").addEventListener('change', priceAjax);
-
-		function priceAjax() { // 가격 정보를 받아오기 위한 Ajax
-			var httpRequest = new XMLHttpRequest();
-			var coinCD = getCoinCode();
-
-			httpRequest.onreadystatechange = replaceContents;
-			httpRequest.open('GET', 'coin/prices?coinCode=' + coinCD);
-			httpRequest.send();
-
-			function replaceContents() {
-				if (httpRequest.readyState === XMLHttpRequest.DONE) {
-					if (httpRequest.status === 200) {
-						document.getElementById("priceTable").innerHTML = httpRequest.response;
-						drawChart ();
-					} else {
-						alert('Request Issue!');
-					}
-				}
-			}
-			
-		}
-
-		function getCoinCode() { // 현재 Select된 코인 코드 가져옴
-			var e = document.getElementById("coinSelect");
-			var cd = e.options[e.selectedIndex].value;
-			return cd;
-		}
-	}
-	
-	function drawChart () { // 차트를 그리기 위한 함수
-		var myChart = echarts.init(document.getElementById('chart'));
-		
-		var priceDataList = document.getElementsByClassName('priceData');
-		var priceVolumeList = document.getElementsByClassName('priceVolume');
-		var priceDateList = document.getElementsByClassName('priceDate');
-		
-		var pList = new Array();
-		var vList = new Array();
-		var dList = new Array();
-		for(var i=0; i < priceDataList.length; i++){
-			pList[i] = priceDataList[priceDataList.length-1-i].textContent;
-			vList[i] = priceVolumeList[priceDataList.length-1-i].textContent;
-			dList[i] = priceDateList[priceDataList.length-1-i].textContent;
-		}
-		
-		option = {
-				  tooltip: {
-				    trigger: 'axis',
-				    axisPointer: {
-				      type: 'cross',
-				      crossStyle: {
-				        color: '#999'
-				      }
-				    }
-				  },
-				  toolbox: {
-				    feature: {
-				      magicType: { show: true, type: ['line', 'bar'] },
-				      saveAsImage: { show: true }
-				    }
-				  },
-				  legend: {
-				    data: ['거래량', '가격']
-				  },
-				  xAxis: [
-				    {
-				      type: 'category',
-				      data: dList,
-				      axisPointer: {
-				        type: 'shadow'
-				      }
-				    }
-				  ],
-				  yAxis: [
-				    {
-				      type: 'value',
-				      name: '거래량',
-				      min: 'dataMin',
-				      max: 'dataMax',
-				      sacle: true
-				    },
-				    {
-				      type: 'value',
-				      name: '가격',
-				      min: 'dataMin',
-				      max: 'dataMax'
-				    }
-				  ],
-				  series: [
-				    {
-				      name: '거래량',
-				      type: 'bar',
-				      data: vList
-				    },
-				    {
-				      name: '가격',
-				      type: 'line',
-				      yAxisIndex: 1,
-				      data: pList
-				    }
-				  ]
-				};
-		myChart.setOption(option);
-	}
-</script>
-</head>
-<body>
-	<h3 id="coinSelectDiv">
-		코인 선택 : <select id="coinSelect">
-			<option th:each="coin : ${coinList}" th:value="${coin.coincode}"
-				th:text="${coin.coinname}"></option>
-		</select>
-	</h3>
-	<table id="priceTable" th:fragment="priceTable">
-		<tr>
-			<th>가격</th>
-			<th>거래량</th>
-			<th>시간</th>
-		</tr>
-		<tr th:each="price : ${priceList}">
-			<td class="priceData" th:text="${price.price}" />
-			<td class="priceVolume" th:text="${#numbers.formatDecimal(price.volume,0,3)}" />
-			<td class="priceDate" th:text="${#temporals.format(price.date, 'MM.dd HH:mm')}" />
-		</tr>
-	</table>
-<div id="chart">
-</div>
-</body>
+<html layout:decorate="~{layout}">
+  <div layout:fragment="content" class="container">
+	<div class="container-left">
+		<h4 id="coinSelectDiv" class="container-left">
+			코인 선택 : <select id="coinSelect">
+				<option th:each="coin : ${coinList}" th:value="${coin.coincode}"
+					th:text="${coin.coinname}"></option>
+			</select>
+		</h4>
+		<table id="priceTable" th:fragment="priceTable">
+			<tr>
+				<th>가격</th>
+				<th>거래량</th>
+				<th>시간</th>
+			</tr>
+			<tr th:each="price : ${priceList}">
+				<td class="priceData" th:text="${#numbers.formatInteger(price.price, 1)}" />
+				<td class="priceVolume" th:text="${#numbers.formatDecimal(price.volume,1,3)}" />
+				<td class="priceDate" th:text="${#temporals.format(price.date, 'MM.dd HH:mm')}" />
+			</tr>
+		</table>
+		<div id="chart"></div>
+	</div>
+	<div class="container-right">
+		<div class="Orders">
+			<ul class="Orders_tablist" role="tablist">
+				<li class="Orders_tabitem" role="tab" aria-selected="true"><button
+						class="Orders_tabbtn">BTC 매수</button></li>
+				<li class="Orders_tabitem" role="tab" aria-selected="false"><button
+						class="Orders_tabbtn">BTC 매도</button></li>
+			</ul>
+			<div class="BuySellTab">
+				<div class="BuySellTab_row">
+					<h4 class="BuySellTab_row_title">주문가능</h4>
+					<div class="BuySellTab_tabbox"><span
+							class="BuySellTab_available-price">0 <em
+								class="BuySellTab_available-symbol">원</em></span></div>
+					<div class="BuySellTab_tabbox"><span
+							class="BuySellTab_available-price">0.00001239 <em
+								class="BuySellTab_available-symbol">BTC</em></span></div>
+				</div>
+				<div class="OrderForm">
+					<div class="OrderForm_row">
+						<h4 class="OrderForm_title">주문가격</h4>
+						<div class="OrderForm_box">
+							<div class="InputNumeric_buy_sell">
+								<div
+									class="InputBox_buy_sell InputBox_active InputBox_label">
+									<div class="InputBox_wrap">
+										<div class="InputBox_box"><input
+												type="text" inputmode="numeric"
+												class="InputBox_box_input priceData" title="주문가격"
+												th:value="${price.price}"></div>
+									</div>
+									<div class="InputNumeric_btn"><button type="button"
+											class="InputNumeric_btn_minus"><span
+												class="blind">-</span></button><button type="button"
+											class="InputNumeric_btn_plus"><span
+												class="blind">+</span></button></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="OrderForm_row OrderForm_row_sub">
+						<dl class="OrderForm_max-order">
+							<dt>최대 주문 가능 수량</dt>
+							<dd>0.0000</dd>
+						</dl>
+						<dl class="OrderForm_max-order">
+							<dt>최대 매도 가능 금액</dt>
+							<dd>470</dd>
+						</dl>
+					</div>
+					<div class="OrderForm_row">
+						<h4 class="OrderForm_title">주문수량</h4>
+						<div class="OrderForm_box">
+							<div class="InputBox_buy_sell">
+								<div class="InputBox_wrap">
+									<div class="InputBox_box"><input
+											id="4ae17e38-b0df-4708-863d-09ab17eb4ed1" type="text" inputmode="numeric"
+											class="InputBox_box_input " autocapitalize="off"
+											placeholder="최소 ≈ 0.0001" value=""><span
+											class="InputBox_sub-txt">BTC</span></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="OrderForm_qty-per"><button
+							class="OrderForm_qty-per_btn">25%</button><button
+							class="OrderForm_qty-per_btn">50%</button><button
+							class="OrderForm_qty-per_btn">75%</button><button
+							class="OrderForm_qty-per_btn">100%</button></div>
+					<div class="OrderForm_line"></div>
+					<div class="OrderForm_row">
+						<h4 class="OrderForm_title">주문금액</h4>
+						<div class="OrderForm_box">
+							<div class="InputBox_buy_sell">
+								<div class="InputBox_wrap">
+									<div class="InputBox_box"><input
+											id="e3a9253c-d716-4bd6-ac82-186f9fde7c68" type="text" inputmode="numeric"
+											class="InputBox_box_input" autocapitalize="off"
+											placeholder="최소 금액 500" value=""><span
+											class="InputBox_sub-txt">원</span></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="ButtonRow"><button
+						class="Button_JtY Button_large Button_row_buy"><span
+							class="Button_text">BTC 매수</span></button></div>
+				<div class="ButtonRow"><button
+					class="Button_JtY Button_large Button_row_sell"><span
+						class="Button_text">BTC 매도</span></button></div>
+			</div>
+		</div>
+	</div>
+	</div>
 </html>

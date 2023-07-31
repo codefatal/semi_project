@@ -2,6 +2,7 @@ package com.solo.semi.model;
 
 import java.time.LocalDateTime;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,14 +20,17 @@ import lombok.Setter;
 @ToString
 public class Prices {
 	
-	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public int pnum;
 	
 	private String coincode;
 	
 	private Double price;
 	
-	private Double vol;
+	@Column(name = "volumes")
+	private Double volume;
 	
-	private LocalDateTime dates;
+	@Column(name = "dates")
+	private LocalDateTime date;
 }
