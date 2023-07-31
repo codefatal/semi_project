@@ -21,7 +21,7 @@ import lombok.Setter;
 public class Prices {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "IDENTITY")
 	public int pnum;
 	
 	private String coincode;

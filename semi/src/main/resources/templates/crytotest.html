@@ -14,7 +14,7 @@
 				<th>시간</th>
 			</tr>
 			<tr th:each="price : ${priceList}">
-				<td class="priceData" th:text="${#numbers.formatInteger(price.price, 1)}" />
+				<td class="priceData" th:text="${#numbers.formatInteger(price.price, 0, 'COMMA')}"></td>
 				<td class="priceVolume" th:text="${#numbers.formatDecimal(price.volume,1,3)}" />
 				<td class="priceDate" th:text="${#temporals.format(price.date, 'MM.dd HH:mm')}" />
 			</tr>
@@ -22,51 +22,60 @@
 		<div id="chart"></div>
 	</div>
 	<div class="container-right">
-		<div class="Orders">
+		<div class="Orders" th:if="${not #lists.isEmpty(priceList)}">
 			<ul class="Orders_tablist" role="tablist">
-				<li class="Orders_tabitem" role="tab" aria-selected="true"><button
-						class="Orders_tabbtn">BTC 매수</button></li>
-				<li class="Orders_tabitem" role="tab" aria-selected="false"><button
-						class="Orders_tabbtn">BTC 매도</button></li>
+				<!-- 매수 탭 -->
+				<li class="Orders_tabitem" role="tab" aria-selected="true">
+					<button class="Orders_tabbtn" data-tab="buy">BTC 매수</button>
+				</li>
+				<!-- 매도 탭 -->
+				<li class="Orders_tabitem" role="tab" aria-selected="false">
+					<button class="Orders_tabbtn" data-tab="sell">BTC 매도</button>
+				</li>
 			</ul>
 			<div class="BuySellTab">
 				<div class="BuySellTab_row">
-					<h4 class="BuySellTab_row_title">주문가능</h4>
-					<div class="BuySellTab_tabbox"><span
-							class="BuySellTab_available-price">0 <em
-								class="BuySellTab_available-symbol">원</em></span></div>
-					<div class="BuySellTab_tabbox"><span
-							class="BuySellTab_available-price">0.00001239 <em
-								class="BuySellTab_available-symbol">BTC</em></span></div>
+					<h4 class="BuySellTab_row_title BuySellTab_title-top">주문가능</h4>
+					<div class="BuySellTab_tabbox buyTabContent">
+						<!-- 매수 탭 내용 -->
+						<span class="BuySellTab_available-price">0 
+						<em class="BuySellTab_available-symbol">원</em></span>
+					</div>
+					<div class="BuySellTab_tabbox sellTabContent" style="display: none;">
+						<!-- 매도 탭 내용 -->
+						<span class="BuySellTab_available-price">0.00001239 
+						<em class="BuySellTab_available-symbol">BTC</em></span>
+					</div>
 				</div>
 				<div class="OrderForm">
 					<div class="OrderForm_row">
 						<h4 class="OrderForm_title">주문가격</h4>
 						<div class="OrderForm_box">
 							<div class="InputNumeric_buy_sell">
-								<div
-									class="InputBox_buy_sell InputBox_active InputBox_label">
+								<div class="InputBox_buy_sell InputBox_active InputBox_label">
 									<div class="InputBox_wrap">
-										<div class="InputBox_box"><input
-												type="text" inputmode="numeric"
-												class="InputBox_box_input priceData" title="주문가격"
-												th:value="${price.price}"></div>
+										<div class="InputBox_box">
+											<input type="text" inputmode="numeric" 
+											class="InputBox_box_input priceData" title="주문가격"
+       										th:placeholder="${#numbers.formatInteger(priceList[0].price, 0, 'COMMA')}">
+										</div>
 									</div>
-									<div class="InputNumeric_btn"><button type="button"
-											class="InputNumeric_btn_minus"><span
-												class="blind">-</span></button><button type="button"
-											class="InputNumeric_btn_plus"><span
-												class="blind">+</span></button></div>
+									<div class="InputNumeric_btn">
+										<button type="button" class="InputNumeric_btn_minus">
+										<span class="blind">-</span></button>
+										<button type="button" class="InputNumeric_btn_plus">
+										<span class="blind">+</span></button>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 					<div class="OrderForm_row OrderForm_row_sub">
-						<dl class="OrderForm_max-order">
+						<dl class="OrderForm_max-order buyTabContent">
 							<dt>최대 주문 가능 수량</dt>
 							<dd>0.0000</dd>
 						</dl>
-						<dl class="OrderForm_max-order">
+						<dl class="OrderForm_max-order sellTabContent" style="display: none;">
 							<dt>최대 매도 가능 금액</dt>
 							<dd>470</dd>
 						</dl>
@@ -76,44 +85,50 @@
 						<div class="OrderForm_box">
 							<div class="InputBox_buy_sell">
 								<div class="InputBox_wrap">
-									<div class="InputBox_box"><input
-											id="4ae17e38-b0df-4708-863d-09ab17eb4ed1" type="text" inputmode="numeric"
-											class="InputBox_box_input " autocapitalize="off"
-											placeholder="최소 ≈ 0.0001" value=""><span
-											class="InputBox_sub-txt">BTC</span></div>
+									<div class="InputBox_box">
+										<input type="text" inputmode="numeric"
+										class="InputBox_box_input " autocapitalize="off"
+										placeholder="최소 ≈ 0.0001" >
+										<span class="InputBox_sub-txt">BTC</span>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-					<div class="OrderForm_qty-per"><button
-							class="OrderForm_qty-per_btn">25%</button><button
-							class="OrderForm_qty-per_btn">50%</button><button
-							class="OrderForm_qty-per_btn">75%</button><button
-							class="OrderForm_qty-per_btn">100%</button></div>
+					<div class="OrderForm_qty-per">
+						<button class="OrderForm_qty-per_btn">25%</button>
+						<button class="OrderForm_qty-per_btn">50%</button>
+						<button class="OrderForm_qty-per_btn">75%</button>
+						<button class="OrderForm_qty-per_btn">100%</button>
+					</div>
 					<div class="OrderForm_line"></div>
 					<div class="OrderForm_row">
 						<h4 class="OrderForm_title">주문금액</h4>
 						<div class="OrderForm_box">
 							<div class="InputBox_buy_sell">
 								<div class="InputBox_wrap">
-									<div class="InputBox_box"><input
-											id="e3a9253c-d716-4bd6-ac82-186f9fde7c68" type="text" inputmode="numeric"
-											class="InputBox_box_input" autocapitalize="off"
-											placeholder="최소 금액 500" value=""><span
-											class="InputBox_sub-txt">원</span></div>
+									<div class="InputBox_box">
+										<input type="text" inputmode="numeric"
+										class="InputBox_box_input" autocapitalize="off"
+										placeholder="최소 금액 500원">
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div class="ButtonRow"><button
-						class="Button_JtY Button_large Button_row_buy"><span
-							class="Button_text">BTC 매수</span></button></div>
-				<div class="ButtonRow"><button
-					class="Button_JtY Button_large Button_row_sell"><span
-						class="Button_text">BTC 매도</span></button></div>
+				<!-- 매수 버튼 -->
+				<div class="ButtonRow ButtonRowBuyContent">
+					<button class="Button_JtY Button_large Button_row_buy">
+					<span class="Button_text">BTC 매수</span></button>
+				</div>
+				<!-- 매도 버튼 -->
+				<div class="ButtonRow ButtonRowSellContent" style="display: none;">
+				<button class="Button_JtY Button_large Button_row_sell">
+					<span class="Button_text">BTC 매도</span></button>
+				</div>
 			</div>
 		</div>
 	</div>
-	</div>
+  </div>
 </html>

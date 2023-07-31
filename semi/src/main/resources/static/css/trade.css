@@ -16,6 +16,20 @@ ul {
     position: relative
 }
 
+.BuySellTab .BuySellTab_row_title.BuySellTab_title-top {
+    align-items: flex-start;
+}
+
+.BuySellTab .BuySellTab_row_title {
+    align-items: center;
+    color: #a4a4a4;
+    display: flex;
+    font-size: 12px;
+    letter-spacing: -.5px;
+    line-height: 20px;
+    width: 62px;
+}
+
 /* check */
 .BuySellTab .BuySellTab_tabbox {
     flex: 1 1;
@@ -37,6 +51,56 @@ ul {
     line-height: 20px;
     margin-left: 4px;
     vertical-align: top
+}
+
+.OrderForm .OrderForm_row {
+    display: flex;
+    justify-content: flex-end;
+    padding: 7px 0;
+    position: relative;
+}
+
+.OrderForm .OrderForm_title {
+    align-items: center;
+    color: #a4a4a4;
+    display: flex;
+    font-size: 12px;
+    letter-spacing: -.5px;
+    line-height: 20px;
+    width: 62px;
+}
+
+.OrderForm .OrderForm_box {
+    flex: 1 1;
+    max-width: 258px;
+}
+
+.OrderForm .OrderForm_row.OrderForm_row_sub {
+    padding: 1px 0 8px;
+}
+
+.OrderForm .OrderForm_row {
+    display: flex;
+    justify-content: flex-end;
+    padding: 7px 0;
+    position: relative;
+}
+
+.OrderForm_max-order {
+    display: flex;
+}
+
+.OrderForm_max-order dt {
+    color: #a4a4a4;
+    font-size: 12px;
+    line-height: 18px;
+}
+
+.OrderForm_max-order dd {
+    color: #444;
+    font-size: 12px;
+    line-height: 18px;
+    margin-left: 5px;
 }
 
 /* check */
