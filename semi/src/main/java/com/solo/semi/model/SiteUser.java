@@ -1,4 +1,4 @@
-package com.solo.semi;
+package com.solo.semi.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

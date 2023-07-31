@@ -2,7 +2,7 @@ package com.solo.semi.controller;
 
 import javax.validation.Valid;
 
-import com.solo.semi.UserCreateForm;
+import com.solo.semi.model.UserCreateForm;
 import com.solo.semi.service.UserService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;

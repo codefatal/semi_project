@@ -1,7 +1,9 @@
 package com.solo.semi.repository;
 
-import com.solo.semi.SiteUser;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.solo.semi.model.SiteUser;
+
 import java.util.Optional;
 
 

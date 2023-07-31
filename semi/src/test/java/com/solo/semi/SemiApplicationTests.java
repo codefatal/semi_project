@@ -7,9 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class SemiApplicationTests {
 
-	@Autowired
-	private MemberMapper memberMapper;
-
 	@Test
 	void contextLoads() {
 	}

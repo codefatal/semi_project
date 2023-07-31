@@ -1,6 +1,6 @@
 package com.solo.semi.service;
 
-import com.solo.semi.SiteUser;
+import com.solo.semi.model.SiteUser;
 import com.solo.semi.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

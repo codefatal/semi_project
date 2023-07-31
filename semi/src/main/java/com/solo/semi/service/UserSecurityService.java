@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.solo.semi.SiteUser;
 import com.solo.semi.UserRole;
+import com.solo.semi.model.SiteUser;
 import com.solo.semi.repository.UserRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
