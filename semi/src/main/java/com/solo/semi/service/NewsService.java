@@ -1,12 +1,13 @@
 package com.solo.semi.service;
 
-import com.solo.semi.News;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
+
+import com.solo.semi.model.News;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;

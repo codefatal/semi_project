@@ -3,6 +3,7 @@ package com.solo.semi.controller;
 import javax.validation.Valid;
 
 import com.solo.semi.model.UserCreateForm;
+import com.solo.semi.service.MyPageService;
 import com.solo.semi.service.UserService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 
     private final UserService userService;
+    private final MyPageService myPageService;
 
     @GetMapping("/signup")
     public String signup(UserCreateForm userCreateForm) {

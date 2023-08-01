@@ -49,7 +49,7 @@ public class SavePriceService {
 	public void savePriceEvery1min() throws Exception {
 		Prices currentPrice = new Prices();
 		List<Coins> coins = (List<Coins>) coinsRepository.findAll();
-		log.info("[savePriceEvery30sec] 30초마다 가격 정보를 저장 (현재 시간: " + LocalDateTime.now() + ", 저장할 코인 수 : " + coins.size() + ")");
+		log.info("[savePriceEvery1min] 1분마다 가격 정보를 저장 (현재 시간: " + LocalDateTime.now() + ", 저장할 코인 수 : " + coins.size() + ")");
 		
 		double curPreGap = 0.0;
 		

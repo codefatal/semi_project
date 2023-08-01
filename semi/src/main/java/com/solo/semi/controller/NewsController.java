@@ -1,6 +1,6 @@
 package com.solo.semi.controller;
 
-import com.solo.semi.News;
+import com.solo.semi.model.News;
 import com.solo.semi.service.NewsService;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;

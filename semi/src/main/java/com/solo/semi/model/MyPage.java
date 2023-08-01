@@ -1,38 +1,42 @@
 package com.solo.semi.model;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Table(name = "MYPAGE")
 @Entity
-public class SiteUser {
-
+public class MyPage {
+	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Long id;
+	
+	@OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID", referencedColumnName = "ID")
+    private SiteUser user;
 
-    @Column(name = "USERNAME", unique = true)
-    private String username;
+    @Column(name = "MONEY")
+    private Double money;
 
-    @Column(name = "PASSWORD")
-    private String password;
+    @Column(name = "USER_BTC")
+    private Double userBtc;
 
-    @Column(name = "EMAIL", unique = true)
-    private String email;
+    @Column(name = "USER_ETH")
+    private Double userEth;
     
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private MyPage mypage;
-
+    
+    
 }

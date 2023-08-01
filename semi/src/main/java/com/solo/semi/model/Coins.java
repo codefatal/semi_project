@@ -1,5 +1,6 @@
 package com.solo.semi.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -16,7 +17,10 @@ import lombok.Setter;
 public class Coins {
 	
 	@Id
-	private String coincode;
-	
-	private String coinname;
+    @Column(name = "COINCODE")
+    private String coincode;
+
+    @Column(name = "COINNAME")
+    private String coinname;
+    
 }

@@ -46,6 +46,7 @@ tr:nth-child(even) {
 
 .container-right {
     width: 35%;
+    height: 636px;
     float: right;
     margin-top: 50px;
     padding: 10px;

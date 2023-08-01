@@ -15,6 +15,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MyPageService myPageService;
 
     public SiteUser create(String username, String email, String password) {
         SiteUser user = new SiteUser();
@@ -22,6 +23,10 @@ public class UserService {
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password));
         this.userRepository.save(user);
+        
+        // MyPageService를 호출하여 해당 사용자와 연결된 MyPage 엔티티를 생성하고 저장
+        myPageService.createMyPageForUser(user);
+        
         return user;
     }
 }

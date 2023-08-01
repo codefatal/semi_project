@@ -56,15 +56,9 @@
 									<div class="InputBox_wrap">
 										<div class="InputBox_box">
 											<input type="text" inputmode="numeric" 
-											class="InputBox_box_input priceData" title="주문가격"
-       										th:placeholder="${#numbers.formatInteger(priceList[0].price, 0, 'COMMA')}">
+											class="InputBox_box_input" title="주문가격"
+       										th:value="${#numbers.formatInteger(priceList[0].price, 0, 'COMMA')}" readonly>
 										</div>
-									</div>
-									<div class="InputNumeric_btn">
-										<button type="button" class="InputNumeric_btn_minus">
-										<span class="blind">-</span></button>
-										<button type="button" class="InputNumeric_btn_plus">
-										<span class="blind">+</span></button>
 									</div>
 								</div>
 							</div>
