@@ -19,7 +19,7 @@ import lombok.Setter;
 public class SiteUser {
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Long id;
 
@@ -31,8 +31,5 @@ public class SiteUser {
 
     @Column(name = "EMAIL", unique = true)
     private String email;
-    
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private MyPage mypage;
 
 }

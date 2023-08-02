@@ -20,14 +20,10 @@ import lombok.Setter;
 public class MyPage {
 	
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Long id;
 	
-	@OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ID", referencedColumnName = "ID")
-    private SiteUser user;
-
     @Column(name = "MONEY")
     private Double money;
 
@@ -36,7 +32,5 @@ public class MyPage {
 
     @Column(name = "USER_ETH")
     private Double userEth;
-    
-    
     
 }

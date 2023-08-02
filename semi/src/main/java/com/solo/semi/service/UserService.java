@@ -1,6 +1,8 @@
 package com.solo.semi.service;
 
+import com.solo.semi.model.MyPage;
 import com.solo.semi.model.SiteUser;
+import com.solo.semi.repository.MyPageRepository;
 import com.solo.semi.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,8 +16,8 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final MyPageRepository myPageRepository;
     private final PasswordEncoder passwordEncoder;
-    private final MyPageService myPageService;
 
     public SiteUser create(String username, String email, String password) {
         SiteUser user = new SiteUser();
@@ -24,8 +26,11 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(password));
         this.userRepository.save(user);
         
-        // MyPageService를 호출하여 해당 사용자와 연결된 MyPage 엔티티를 생성하고 저장
-        myPageService.createMyPageForUser(user);
+        MyPage mypage = new MyPage();
+        mypage.setMoney(1000000.0);
+        mypage.setUserBtc(0.0000);
+        mypage.setUserEth(0.0000);
+        this.myPageRepository.save(mypage);
         
         return user;
     }
