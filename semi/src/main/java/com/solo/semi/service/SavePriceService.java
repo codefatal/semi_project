@@ -38,11 +38,11 @@ public class SavePriceService {
 	static Map<String, Double> preVolumeMap = new HashMap<>();
 	
 	// 프로그램 실행 시 이전에 저장했던 가격 정보는 삭제
-	@PostConstruct
-	private void initDelAllPrices() throws Exception {
-		log.info("[initDelAllPrices] 프로그램 최초 실행 시, 기존 Price 데이터 삭제(지운 데이터): " + pricesRepository.count() + ")");
-		pricesRepository.deleteAll();
-	}
+//	@PostConstruct
+//	private void initDelAllPrices() throws Exception {
+//		log.info("[initDelAllPrices] 프로그램 최초 실행 시, 기존 Price 데이터 삭제(지운 데이터): " + pricesRepository.count() + ")");
+//		pricesRepository.deleteAll();
+//	}
 	
 	// 1분마다 코인의 가격과 거래량 정보를 저장
 	@Scheduled(cron = "0 0/1 * * * *") // 매분 00초 마다 실행

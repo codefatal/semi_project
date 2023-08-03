@@ -38,13 +38,11 @@
 					<h4 class="BuySellTab_row_title BuySellTab_title-top">주문가능</h4>
 					<div class="BuySellTab_tabbox buyTabContent">
 						<!-- 매수 탭 내용 -->
-						<span class="BuySellTab_available-price">0 
-						<em class="BuySellTab_available-symbol">원</em></span>
+						<span class="BuySellTab_available-price" th:text="${myPage.money} + ' 원'"></span>
 					</div>
 					<div class="BuySellTab_tabbox sellTabContent" style="display: none;">
 						<!-- 매도 탭 내용 -->
-						<span class="BuySellTab_available-price">0.00001239 
-						<em class="BuySellTab_available-symbol">BTC</em></span>
+						<span class="BuySellTab_available-price" th:text="${myPage.userBtc} + ' BTC'"></span>
 					</div>
 				</div>
 				<div class="OrderForm">
@@ -67,11 +65,12 @@
 					<div class="OrderForm_row OrderForm_row_sub">
 						<dl class="OrderForm_max-order buyTabContent">
 							<dt>최대 주문 가능 수량</dt>
-							<dd>0.0000</dd>
+							<dd th:text="${#numbers.formatDecimal(myPage.money/priceList[0].price, 1, 5)}"></dd>
 						</dl>
 						<dl class="OrderForm_max-order sellTabContent" style="display: none;">
 							<dt>최대 매도 가능 금액</dt>
-							<dd>470</dd>
+							<dd "${(#numbers.formatDecimal(priceList[0].price/myPage.userBtc, 0) == 'Infinity') ? 
+									'0' : (#numbers.formatDecimal(priceList[0].price/myPage.userBtc, 0))}">0</dd>
 						</dl>
 					</div>
 					<div class="OrderForm_row">
@@ -82,7 +81,7 @@
 									<div class="InputBox_box">
 										<input type="text" inputmode="numeric"
 										class="InputBox_box_input " autocapitalize="off"
-										placeholder="최소 ≈ 0.0001" >
+										placeholder="최소 ≈ 0.0001" id="orderQuantity">
 										<span class="InputBox_sub-txt">BTC</span>
 									</div>
 								</div>
@@ -90,10 +89,10 @@
 						</div>
 					</div>
 					<div class="OrderForm_qty-per">
-						<button class="OrderForm_qty-per_btn">25%</button>
-						<button class="OrderForm_qty-per_btn">50%</button>
-						<button class="OrderForm_qty-per_btn">75%</button>
-						<button class="OrderForm_qty-per_btn">100%</button>
+						<button class="OrderForm_qty-per_btn" onclick="setOrderPercentage(25)">25%</button>
+						<button class="OrderForm_qty-per_btn" onclick="setOrderPercentage(50)">50%</button>
+						<button class="OrderForm_qty-per_btn" onclick="setOrderPercentage(75)">75%</button>
+						<button class="OrderForm_qty-per_btn" onclick="setOrderPercentage(100)">100%</button>
 					</div>
 					<div class="OrderForm_line"></div>
 					<div class="OrderForm_row">
@@ -104,7 +103,7 @@
 									<div class="InputBox_box">
 										<input type="text" inputmode="numeric"
 										class="InputBox_box_input" autocapitalize="off"
-										placeholder="최소 금액 500원">
+										placeholder="최소 금액 500원" id="orderAmount" readonly>
 									</div>
 								</div>
 							</div>

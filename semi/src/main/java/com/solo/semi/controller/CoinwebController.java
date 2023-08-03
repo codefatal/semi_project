@@ -2,6 +2,7 @@ package com.solo.semi.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,7 +10,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.solo.semi.model.Coins;
+import com.solo.semi.model.MyPage;
 import com.solo.semi.model.Prices;
+import com.solo.semi.model.SiteUser;
+import com.solo.semi.repository.MyPageRepository;
+import com.solo.semi.service.UserService;
 import com.solo.semi.service.WebPageService;
 
 import lombok.RequiredArgsConstructor;
@@ -17,7 +22,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Controller
 public class CoinwebController {
+	
 	private final WebPageService webPageService;
+	private final MyPageRepository myPageRepository;
+	private final UserService userService;
 	
 	@GetMapping("/coin")
 	public String coinPage(Model model) throws Exception {
@@ -27,6 +35,17 @@ public class CoinwebController {
 		List<Prices> priceList = new ArrayList<>();
 		priceList = webPageService.findPriceList(coinList.get(0).getCoincode());
 		model.addAttribute("priceList", priceList);
+		
+		SiteUser currentUser = userService.getCurrentUser();
+	    
+	    if (currentUser != null) {
+	        Long currentUserId = currentUser.getId();
+	        Optional<MyPage> myPageOptional = myPageRepository.findById(currentUserId);
+	        MyPage myPage = myPageOptional.orElse(new MyPage());
+	        model.addAttribute("myPage", myPage);
+	    } else {
+	        model.addAttribute("myPage", new MyPage()); // 미인증 사용자인 경우 빈 MyPage 객체를 추가
+	    }
 		
 		return "crytotest";
 	}
