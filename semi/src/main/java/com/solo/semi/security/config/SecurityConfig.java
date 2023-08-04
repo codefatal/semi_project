@@ -1,4 +1,4 @@
-package com.solo.semi.config;
+package com.solo.semi.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
