@@ -9,5 +9,5 @@ import com.solo.semi.model.MyPage;
 
 @Repository
 public interface MyPageRepository extends CrudRepository<MyPage, Long>{
-	Optional<MyPage> findById(Long id);
+	
 }

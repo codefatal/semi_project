@@ -26,7 +26,9 @@ public class SecurityConfig {
                 .logout((logout) -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/user/logout"))
                         .logoutSuccessUrl("/")
-                        .invalidateHttpSession(true));
+                        .invalidateHttpSession(true))
+		        .csrf((csrf) -> csrf
+		                .ignoringAntMatchers("/coin/prices/buy", "/coin/prices/sell"));
         return http.build();
     }
 
