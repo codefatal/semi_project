@@ -15,11 +15,7 @@ import lombok.Setter;
 public class SiteUser {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
-    private Long id;
-
-    @Column(name = "USERNAME", unique = true)
+	@Column(name = "USERNAME")
     private String username;
 
     @Column(name = "PASSWORD")

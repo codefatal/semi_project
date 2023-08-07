@@ -1,0 +1,127 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="container">
+	<div id="contents"><input type="hidden" id="delioEventEnd" data-language="delio.event.end"
+			value="9999-12-31 23:59:59"><input type="hidden" name="" id="popYn" value="N"> <input type="hidden" name=""
+			id="agmtYn" value="N">
+		<h2 class="title" data-language="common.head.msg23">자산현황</h2>
+		<div class="summary">
+			<div class="graph donut"><svg class="stats_progress" width="98" height="98">
+					<circle class="BTC" cx="49" cy="49" r="44" fill="transparent" stroke-dasharray="277"
+						stroke-dashoffset="0"></circle>
+					<circle class="KRW" cx="49" cy="49" r="44" fill="transparent" stroke-dasharray="277"
+						stroke-dashoffset="-277"></circle>
+					<circle class="ETH" cx="49" cy="49" r="44" fill="transparent" stroke-dasharray="277"
+						stroke-dashoffset="-277"></circle></circle>
+				</svg></div>
+			<dl class="total_cash">
+				<dt data-language="common.head.msg63">총 보유자산</dt>
+				<dd><strong id="dataTotal" th:text="${#numbers.formatInteger(myPage.money + (myPage.userBtc*priceList[0].price) + (myPage.userEth*priceList[0].price), 0, 'COMMA')} +' 원'"><span data-language="common.msg47">원</span></strong>
+				<span class="btc-transform" >≈ <span id="btcTran" th:text="${#numbers.formatDecimal((myPage.money/priceList[0].price) + myPage.userBtc + myPage.userEth, 1, 9)}"></span>BTC</span></dd>
+			</dl>
+			<ul class="stat_list">
+				<li class="stat_BTC">BTC <span class="fr">100.00%</span></li>
+				<li class="stat_ETH">ETH <span class="fr">100.00%</span></li>
+				<li class="stat_KRW">KRW <span class="fr">0.00%</span></li>
+			</ul>
+		</div>
+		<div class="tb-sum-box">
+			<table class="tb_sum">
+				<colgroup>
+					<col width="150">
+					<col width="150">
+				</colgroup>
+				<tbody>
+					<tr>
+						<th data-language="page.u2.msg39">- 총 수익률</th>
+						<td class="tx_r"><span class="tx_total_rate tx_sum_value color_red">+396.88%</span></td>
+					</tr>
+					<tr>
+						<th data-language="page.u2.msg38">- 총 평가손익 (KRW)</th>
+						<td class="tx_r"><span class="tx_total_value tx_sum_value color_red"
+								data-language="common.msg47">+381 <span>원</span></span></td>
+					</tr>
+				</tbody>
+			</table>
+			<table class="tb_sum">
+				<colgroup>
+					<col width="150">
+					<col width="150">
+				</colgroup>
+				<tbody>
+					<tr>
+						<th data-language="page.tradeview.msg81">- 총 매수금액 (KRW)</th>
+						<td class="tx_r" data-language="common.msg47"><span
+								class="tx_total_buy_pic tx_sum_value" th:text="${#numbers.formatInteger(sumTradePrice, 0, 'COMMA')}"></span> 원</td>
+					</tr>
+					<tr>
+						<th data-language="page.tradeview.msg82">- 주문가능원화</th>
+						<td class="tx_r" data-language="common.msg47"><span class="tx_total_pic tx_sum_value" th:text="${#numbers.formatInteger(myPage.money, 0, 'COMMA')}"></span> 원
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div id="coinSearchBox">
+			<div class="search_wrap">
+				<a href="/trade_history/history" class="ab_r btn btn_org_line_o" data-language="page.common.msg403">거래내역</a>
+			</div>
+			<table class="table_st1" data-verification="ASSETS_ASSETS_TABLE">
+				<colgroup>
+					<col width="140">
+					<col width="*">
+					<col width="140">
+					<col width="140">
+					<col width="140">
+					<col width="115">
+					<col width="90">
+				</colgroup>
+				<thead>
+					<tr>
+						<th data-language="page.u2.msg28">자산구분</th>
+						<th class="tx_r" data-language="page.tradeview.msg85">보유잔고</th>
+						<th class="tx_r" data-language="page.tradeview.msg86">평균매수가</th>
+						<th class="tx_r" data-language="page.common.msg231">매수금액</th>
+						<th class="tx_r" data-language="page.tradeview.msg88">평가금액(KRW)</th>
+						<th class="tx_r" data-language="page.tradeview.msg87">평가손익(KRW)</th>
+						<th class="tx_r" data-language="page.u2.msg45">수익률(%)</th>
+					</tr>
+				</thead>
+				<tbody id="assetListTable" class="coin_list">
+					<tr data-asset="478" data-coin="BTC" data-key="C0101" data-live="Y" class="fvtWrap">
+						<td>비트코인<br><span class="code">BTC</span><span class="blind">BITCOIN비트코인ㅂㅌㅋㅇ</span></td>
+						<td class="tx_r"> <span class="tx_available" th:text="${#numbers.formatDecimal(myPage.userBtc, 1, 5)}"></span></td>
+						<td class="tx_r">
+							<div class="update_avg_pic">
+								<div class="update-avgpic"><span class="tx_avg_buy_amt">7,653,821</span><a
+										href="javascript:" data-coin="비트코인" data-symbol="BTC" data-value="7,653,821"
+										data-valance="0.00001239" data-price="478" class="sp_comm update_avgpic_btn"
+										title="수정" data-language="page.common.msg06"></a></div>
+							</div>
+						</td>
+						<td class="tx_r"><span class="tx_buy_pic">95</span></td>
+						<td class="tx_r"> <span class="tx_krw_pic">477</span></td>
+						<td class="tx_r"><span class="tx_value color_red">+382</span></td>
+						<td class="tx_r"><span class="tx_rate color_red">+402.11%</span></td>
+					</tr>
+					<tr data-asset="0" data-coin="ETH" data-key="C0102" data-live="Y" class="fvtWrap">
+						<td>이더리움<br><span class="code">ETH</span><span class="blind">이더리움ETHㅇㄷㄹㅇ</span></td>
+						<td class="tx_r"><span class="tx_available" th:text="${#numbers.formatDecimal(myPage.userEth, 1, 5)}"></span></td>
+						<td class="tx_r">
+							<div class="update_avg_pic">
+								<div><span class="tx_avg_buy_amt">1,902,130</span><a href="javascript:;"
+										data-coin="이더리움" data-symbol="ETH" data-value="1902130" data-valance="0"
+										data-price="0" class="sp_comm update_avgpic_btn" title="수정"></a></div>
+							</div>
+						</td>
+						<td class="tx_r"><span class="tx_buy_pic">0</span></td>
+						<td class="tx_r"><span class="tx_krw_pic">0</span></td>
+						<td class="tx_r"><span class="tx_value">0</span></td>
+						<td class="tx_r"><span class="tx_rate">0</span></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+</html>

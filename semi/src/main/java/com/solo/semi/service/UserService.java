@@ -36,6 +36,7 @@ public class UserService {
         return userOptional.orElse(null);
     }
     
+    @Transactional
     public SiteUser create(String username, String email, String password) {
         SiteUser user = new SiteUser();
         user.setUsername(username);
@@ -44,9 +45,10 @@ public class UserService {
         this.userRepository.save(user);
         
         MyPage mypage = new MyPage();
-        mypage.setMoney(1000000.0);
-        mypage.setUserBtc(0.0000);
-        mypage.setUserEth(0.0000);
+        mypage.setUsername(username);
+        mypage.setMoney(1000000.0); // 모의투자용 기본금액
+        mypage.setUserBtc(0.0000); // 기본 BTC
+        mypage.setUserEth(0.0000); // 기본 ETH
         this.myPageRepository.save(mypage);
         
         return user;

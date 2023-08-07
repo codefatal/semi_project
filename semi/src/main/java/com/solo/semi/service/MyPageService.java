@@ -24,8 +24,8 @@ public class MyPageService {
         SiteUser currentUser = userService.getCurrentUser();
 
         if (currentUser != null) {
-            Long currentUserId = currentUser.getId();
-            Optional<MyPage> myPageOptional = myPageRepository.findById(currentUserId);
+            String currentUsername = currentUser.getUsername();
+            Optional<MyPage> myPageOptional = myPageRepository.findByUsername(currentUsername);
 
             if (myPageOptional.isPresent()) {
                 MyPage myPage = myPageOptional.get();

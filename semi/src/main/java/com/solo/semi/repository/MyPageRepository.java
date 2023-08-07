@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.solo.semi.model.MyPage;
 
 @Repository
-public interface MyPageRepository extends CrudRepository<MyPage, Long>{
+public interface MyPageRepository extends CrudRepository<MyPage, String>{
+	Optional<MyPage> findByUsername(String currentUsername);
 	
 }

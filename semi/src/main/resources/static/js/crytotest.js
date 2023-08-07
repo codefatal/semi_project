@@ -158,6 +158,8 @@ $(document).ready(function() {
         // 주문 금액 및 주문 수량 값을 가져옵니다.
         const orderAmount = parseFloat($('#orderAmount').val().replace('원', '').replace(/,/g, '')) || 0;
         const orderQuantity = parseFloat($('#orderQuantitySecondary').val()) || 0;
+        const rawPricePerBTC = priceLista[0] && priceLista[0].price ? priceLista[0].price : 0;
+		const pricePerBTC = Math.floor(rawPricePerBTC * 100000) / 100000.0;
 
         // 주문금액이 사용자의 보유금액보다 많으면 매수를 진행하지 않습니다.
         if(orderQuantity > myPageData.money) {
@@ -176,7 +178,8 @@ $(document).ready(function() {
     		dataType: "json",  // 이 부분 추가
             data: JSON.stringify ({
                 money: myPageData.money,
-                userBtc: myPageData.userBtc
+                userBtc: myPageData.userBtc,
+                price: pricePerBTC
             }),
             success: function(response) {
                 console.log("Data updated successfully!", response);
@@ -202,6 +205,8 @@ $(document).ready(function() {
         // 주문 금액 및 주문 수량 값을 가져옵니다.
         const orderAmount = parseFloat($('#orderAmount').val().replace('원', '').replace(/,/g, '')) || 0;
         const orderQuantity = parseFloat($('#orderQuantitySecondary').val()) || 0;
+        const rawPricePerBTC = priceLista[0] && priceLista[0].price ? priceLista[0].price : 0;
+		const pricePerBTC = Math.floor(rawPricePerBTC * 100000) / 100000.0;
 
         // 주문 수량이 사용자의 BTC 보유량보다 많으면 매도를 진행하지 않습니다.
         if(orderQuantity > myPageData.money) {
@@ -220,7 +225,8 @@ $(document).ready(function() {
     		dataType: "json",  // 이 부분 추가
             data: JSON.stringify ({
                 money: myPageData.money,
-                userBtc: myPageData.userBtc
+                userBtc: myPageData.userBtc,
+                price: pricePerBTC
             }),
             success: function(response) {
                 console.log("Data updated successfully!", response);

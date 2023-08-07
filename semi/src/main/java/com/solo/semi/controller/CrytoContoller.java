@@ -25,4 +25,5 @@ public class CrytoContoller {
     public String trade() {
     	return "trade";
     }
+
 }

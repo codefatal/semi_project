@@ -8,6 +8,6 @@ import com.solo.semi.model.SiteUser;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<SiteUser, Long> {
+public interface UserRepository extends JpaRepository<SiteUser, String> {
 	Optional<SiteUser> findByUsername(String username);
 }

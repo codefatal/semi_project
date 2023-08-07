@@ -21,6 +21,8 @@ import com.solo.semi.model.MyPage;
 import com.solo.semi.model.Prices;
 import com.solo.semi.model.SiteUser;
 import com.solo.semi.repository.MyPageRepository;
+import com.solo.semi.repository.TradeTestRepository;
+import com.solo.semi.service.TradeTestService;
 import com.solo.semi.service.UserService;
 import com.solo.semi.service.WebPageService;
 
@@ -32,7 +34,9 @@ public class CoinwebController {
 	
 	private final WebPageService webPageService;
 	private final MyPageRepository myPageRepository;
+	private final TradeTestRepository tradeTestRepository;
 	private final UserService userService;
+	private final TradeTestService tradeTestService;
 	
 	@GetMapping("/coin")
     public String coinPage(Model model) throws Exception {
@@ -46,8 +50,8 @@ public class CoinwebController {
         SiteUser currentUser = userService.getCurrentUser();
 
         if (currentUser != null) {
-            Long currentUserId = currentUser.getId();
-            Optional<MyPage> myPageOptional = myPageRepository.findById(currentUserId);
+            String currentUsername = currentUser.getUsername();
+            Optional<MyPage> myPageOptional = myPageRepository.findByUsername(currentUsername);
             MyPage myPage = myPageOptional.orElse(new MyPage());
             double maxQuantity = myPage.getMoney() / priceList.get(0).getPrice();
             double maxQuantityRoundedDown = Math.floor(maxQuantity * 100000) / 100000.0;
@@ -84,8 +88,8 @@ public class CoinwebController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null); // 401 Unauthorized
         }
 
-        Long currentUserId = currentUser.getId();
-        Optional<MyPage> myPageOptional = myPageRepository.findById(currentUserId);
+        String currentUsername = currentUser.getUsername();
+        Optional<MyPage> myPageOptional = myPageRepository.findByUsername(currentUsername);
         
         if (!myPageOptional.isPresent()) {
             return ResponseEntity.notFound().build(); // 404 Not Found
@@ -103,19 +107,22 @@ public class CoinwebController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in.");
         }
 
-        Long currentUserId = currentUser.getId();
-        Optional<MyPage> myPageOptional = myPageRepository.findById(currentUserId);
+        String currentUsername = currentUser.getUsername();
+        Optional<MyPage> myPageOptional = myPageRepository.findByUsername(currentUsername);
         
         if (myPageOptional.isPresent()) {
             MyPage myPage = myPageOptional.get();
-            
             // myPage에 request에서 받은 money 및 userBtc를 사용하여 업데이트
             myPage.setMoney(request.getMoney());
             myPage.setUserBtc(request.getUserBtc());
-
+            
             // myPage 저장
             myPageRepository.save(myPage);
-
+            
+            String coinCode = "BTC";
+            int tradetype = 1;
+            
+            tradeTestService.tradeTestLog(coinCode, tradetype, request.getMoney(), request.getUserBtc(), request.getPrice());
             // JSON 응답을 사용하여 리다이렉트를 권장
             Map<String, String> response = new HashMap<>();
             response.put("message", "Updated successfully.");
@@ -136,8 +143,8 @@ public class CoinwebController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in.");
         }
 
-        Long currentUserId = currentUser.getId();
-        Optional<MyPage> myPageOptional = myPageRepository.findById(currentUserId);
+        String currentUsername = currentUser.getUsername();
+        Optional<MyPage> myPageOptional = myPageRepository.findByUsername(currentUsername);
 
         if (myPageOptional.isPresent()) {
             MyPage myPage = myPageOptional.get();
@@ -145,6 +152,11 @@ public class CoinwebController {
             // myPage에 request에서 받은 money 및 userBtc를 사용하여 업데이트
             myPage.setMoney(request.getMoney());
             myPage.setUserBtc(request.getUserBtc());
+            
+            String coinCode = "BTC";
+            int tradetype = 2;
+            
+            tradeTestService.tradeTestLog(coinCode, tradetype, request.getMoney(), request.getUserBtc(), request.getPrice());
 
             // myPage 저장
             myPageRepository.save(myPage);
@@ -158,6 +170,37 @@ public class CoinwebController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
+    }
+    
+
+    @GetMapping("/user/mypage")
+    public String trade(Model model) throws Exception {
+    	List<Coins> coinList = webPageService.findAllCoins();
+        model.addAttribute("coinList", coinList);
+
+        List<Prices> priceList = new ArrayList<>();
+        priceList = webPageService.findPriceList(coinList.get(0).getCoincode());
+        model.addAttribute("priceList", priceList);
+        
+        SiteUser currentUser = userService.getCurrentUser();
+        
+
+
+        if (currentUser != null) {
+            String currentUsername = currentUser.getUsername();
+            Optional<MyPage> myPageOptional = myPageRepository.findByUsername(currentUsername);
+            MyPage myPage = myPageOptional.orElse(new MyPage());
+            Double sumTradePrice = tradeTestRepository.sumTradePriceByUsernameAndTradeType(currentUsername);
+            model.addAttribute("sumTradePrice", sumTradePrice);
+            double maxQuantity = myPage.getMoney() / priceList.get(0).getPrice();
+            double maxQuantityRoundedDown = Math.floor(maxQuantity * 100000) / 100000.0;
+            model.addAttribute("maxQuantityRoundedDown", maxQuantityRoundedDown);
+            model.addAttribute("myPage", myPage);
+        } else {
+            model.addAttribute("myPage", new MyPage()); // 미인증 사용자인 경우 빈 MyPage 객체를 추가
+        }
+
+    	return "mypage";
     }
     
 }
