@@ -1,0 +1,19 @@
+<html layout:decorate="~{layout}">
+    <div layout:fragment="content" class="container">
+        <table id="tradeBuyTable" th:fragment="tradeBuyTable">
+			<tr>
+				<th>코인</th>
+				<th>구매가격</th>
+				<th>구매개수</th>
+				<th>코인가격</th>
+				<th>구매시간</th>
+			</tr>
+			<tr th:each="trade : ${tradeList}">
+				<td class="tradeCoincode" th:text="${trade.coincode}"></td>
+				<td class="tradePrice" th:text="${trade.tradePrice}" />
+				<td class="tradeItem" th:text="${trade.tradeItem}" />
+				<td class="tradeCoinMoney" th:text="${trade.tradeCoinMoney}" />
+				<td class="tradeDate" th:text="${#temporals.format(trade.date, 'MM.dd HH:mm')}" />
+			</tr>
+    </div>
+</html>

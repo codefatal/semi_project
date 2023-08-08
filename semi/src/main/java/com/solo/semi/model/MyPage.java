@@ -33,4 +33,7 @@ public class MyPage {
     @Transient
     private double price;
     
+    @Transient
+    private double orderAmount;
+    
 }

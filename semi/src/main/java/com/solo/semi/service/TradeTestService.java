@@ -19,7 +19,7 @@ public class TradeTestService {
 	private final TradeTestRepository tradeTestRepository;
 	private final UserService userService;
 	
-	public TradeTest tradeTestLog(String coinCode, int tradeType, double tradePrice, double tradeItem, double price) {
+	public TradeTest tradeTestLog(String coinCode, int tradeType, double orderamount, double tradeItem, double price) {
 		SiteUser currentUser = userService.getCurrentUser();
 		TradeTest trade = new TradeTest();
 				
@@ -27,7 +27,7 @@ public class TradeTestService {
 		trade.setUsername(currentUsername);
 		trade.setCoincode(coinCode);
 		trade.setTradeType(tradeType);
-		trade.setTradePrice(tradePrice);
+		trade.setTradePrice(orderamount);
 		trade.setTradeItem(tradeItem);
 		trade.setTradeCoinMoney(price);
 		trade.setDate(LocalDateTime.now());

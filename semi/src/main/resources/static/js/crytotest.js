@@ -1,6 +1,7 @@
 $(document).ready(function() {
     let myPageData;  // myPage 데이터를 저장하기 위한 전역 변수를 선언합니다.
     let priceLista;
+    let priceListb;
 
     // myPage 정보를 가져오는 AJAX 요청
     $.ajax({
@@ -8,10 +9,12 @@ $(document).ready(function() {
         type: "GET",
         dataType: "json",
         success: function(response) {
+			console.log(response)
             myPageData = response;
             
             // myPageData 설정 후 priceList 요청 시작
-            fetchPriceList();
+            fetchBtcPriceList();
+            fetchEthPriceList();
         },
         error: function(xhr, status, error) {
             if(xhr.status === 403) {
@@ -22,7 +25,7 @@ $(document).ready(function() {
         }
     });
     
-    function fetchPriceList() {
+    function fetchBtcPriceList() {
         // AJAX 요청을 보내서 priceList를 가져옵니다.
         $.ajax({
 		    url: "/coin/prices/priceslist",
@@ -34,6 +37,25 @@ $(document).ready(function() {
 		    success: function(response) {
 		        updatePageWithPriceList(response);
 		        priceLista = response;
+		    },
+		    error: function(xhr, status, error) {
+		        console.error("Error occurred while fetching priceList:", error);
+		    }
+		});
+    }
+    
+    function fetchEthPriceList() {
+        // AJAX 요청을 보내서 priceList를 가져옵니다.
+        $.ajax({
+		    url: "/coin/prices/priceslist",
+		    type: "GET",
+		    dataType: "json",
+		    data: {
+		        coinCode: "ETH"  // 여기에 적절한 코인 코드 값을 입력해주세요.
+		    },
+		    success: function(response) {
+		        updatePageWithPriceList(response);
+		        priceListb = response;
 		    },
 		    error: function(xhr, status, error) {
 		        console.error("Error occurred while fetching priceList:", error);
@@ -179,7 +201,8 @@ $(document).ready(function() {
             data: JSON.stringify ({
                 money: myPageData.money,
                 userBtc: myPageData.userBtc,
-                price: pricePerBTC
+                price: pricePerBTC,
+                orderAmount: orderAmount
             }),
             success: function(response) {
                 console.log("Data updated successfully!", response);
@@ -226,7 +249,8 @@ $(document).ready(function() {
             data: JSON.stringify ({
                 money: myPageData.money,
                 userBtc: myPageData.userBtc,
-                price: pricePerBTC
+                price: pricePerBTC,
+                orderAmount: orderAmount
             }),
             success: function(response) {
                 console.log("Data updated successfully!", response);
@@ -246,5 +270,45 @@ $(document).ready(function() {
 
         // 여기서 필요한 경우 서버에 업데이트된 데이터를 저장하거나 페이지를 갱신할 수 있습니다.
     });
+    
+    // 전체수익률
+    let totalRate = parseFloat($(".total-rate").text());
+    if (totalRate > 0) {
+        $(".total-rate").removeClass("color_blue");
+        $(".total-rate").addClass("color_red").prepend("+");
+    } else if (totalRate < 0) {
+        $(".total-rate").removeClass("color_red");
+        $(".total-rate").addClass("color_blue");
+    } else {
+        $(".total-rate").removeClass("color_red");
+		$(".total-rate").removeClass("color_blue");
+    }
+
+    // 전체 평가손익
+    let totalProfit = parseFloat($(".total-profit").text().replace(/,/g, ''));
+    if (totalProfit > 0) {
+        $(".total-profit").removeClass("color_blue");
+        $(".total-profit").addClass("color_red").prepend("+");
+    } else if (totalProfit < 0) {
+        $(".total-profit").removeClass("color_red");
+        $(".total-profit").addClass("color_blue");
+    } else {
+		$(".total-profit").removeClass("color_red");
+		$(".total-profit").removeClass("color_blue");
+    }
+    
+    // 코인별 수익률
+    $(".tx_value, .tx_rate").each(function() {
+	    let valueText = $(this).text().replace(/,/g, '').replace('%', ''); // 콤마와 % 제거
+	    let value = parseFloat(valueText);
+	
+	    if (value > 0) {
+	        $(this).addClass("color_red").text("+" + valueText + (valueText.includes('.') ? '%' : ''));
+	    } else if (value < 0) {
+	        $(this).addClass("color_blue");
+	    } else {
+	        $(this).removeClass("color_red").removeClass("color_blue").text(valueText + (valueText.includes('.') ? '%' : ''));
+	    }
+	});
 	
 });

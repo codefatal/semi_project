@@ -20,6 +20,7 @@ import com.solo.semi.model.Coins;
 import com.solo.semi.model.MyPage;
 import com.solo.semi.model.Prices;
 import com.solo.semi.model.SiteUser;
+import com.solo.semi.model.TradeTest;
 import com.solo.semi.repository.MyPageRepository;
 import com.solo.semi.repository.TradeTestRepository;
 import com.solo.semi.service.TradeTestService;
@@ -122,7 +123,7 @@ public class CoinwebController {
             String coinCode = "BTC";
             int tradetype = 1;
             
-            tradeTestService.tradeTestLog(coinCode, tradetype, request.getMoney(), request.getUserBtc(), request.getPrice());
+            tradeTestService.tradeTestLog(coinCode, tradetype, request.getOrderAmount(), request.getUserBtc(), request.getPrice());
             // JSON 응답을 사용하여 리다이렉트를 권장
             Map<String, String> response = new HashMap<>();
             response.put("message", "Updated successfully.");
@@ -156,7 +157,7 @@ public class CoinwebController {
             String coinCode = "BTC";
             int tradetype = 2;
             
-            tradeTestService.tradeTestLog(coinCode, tradetype, request.getMoney(), request.getUserBtc(), request.getPrice());
+            tradeTestService.tradeTestLog(coinCode, tradetype, request.getOrderAmount(), request.getUserBtc(), request.getPrice());
 
             // myPage 저장
             myPageRepository.save(myPage);
@@ -173,7 +174,7 @@ public class CoinwebController {
     }
     
 
-    @GetMapping("/user/mypage")
+    @GetMapping("/mypage")
     public String trade(Model model) throws Exception {
     	List<Coins> coinList = webPageService.findAllCoins();
         model.addAttribute("coinList", coinList);
@@ -183,15 +184,28 @@ public class CoinwebController {
         model.addAttribute("priceList", priceList);
         
         SiteUser currentUser = userService.getCurrentUser();
-        
 
 
         if (currentUser != null) {
             String currentUsername = currentUser.getUsername();
             Optional<MyPage> myPageOptional = myPageRepository.findByUsername(currentUsername);
             MyPage myPage = myPageOptional.orElse(new MyPage());
-            Double sumTradePrice = tradeTestRepository.sumTradePriceByUsernameAndTradeType(currentUsername);
+            // 전체 계산
+            Double sumTradePrice = tradeTestRepository.buySum(currentUsername);
             model.addAttribute("sumTradePrice", sumTradePrice);
+            // BTC 계산
+            String BTC = "BTC";
+            Double sumBtcTradePrice = tradeTestRepository.buyCoinSum(BTC, currentUsername);
+            model.addAttribute("sumBtcTradePrice", sumBtcTradePrice);
+            Double avgBtcTradePrice = tradeTestRepository.buyCoinAvg(BTC, currentUsername);
+            model.addAttribute("avgBtcTradePrice", avgBtcTradePrice);
+            
+            String ETH = "ETH";
+            Double sumEthTradePrice = tradeTestRepository.buyCoinSum(ETH, currentUsername);
+            model.addAttribute("sumEthTradePrice", sumEthTradePrice);
+            Double avgEthTradePrice = tradeTestRepository.buyCoinAvg(ETH, currentUsername);
+            model.addAttribute("avgEthTradePrice", avgEthTradePrice);
+            
             double maxQuantity = myPage.getMoney() / priceList.get(0).getPrice();
             double maxQuantityRoundedDown = Math.floor(maxQuantity * 100000) / 100000.0;
             model.addAttribute("maxQuantityRoundedDown", maxQuantityRoundedDown);
@@ -202,5 +216,84 @@ public class CoinwebController {
 
     	return "mypage";
     }
+    
+    @GetMapping("/mypage/tradelist")
+    public String tradeList(Model model) throws Exception {
+		SiteUser currentUser = userService.getCurrentUser();
+    	
+    	if (currentUser != null) {
+    		String currentUsername = currentUser.getUsername();
+    		
+    		List<TradeTest> tradeBuyList = new ArrayList<>();
+    		tradeBuyList = tradeTestRepository.tradeBuyList(currentUsername);
+    		model.addAttribute("tradeBuyList", tradeBuyList);
+    		List<TradeTest> tradeSellList = new ArrayList<>();
+    		tradeSellList = tradeTestRepository.tradeSellList(currentUsername);
+    		model.addAttribute("tradeSellList", tradeSellList);
+    		
+    	} else {
+    		model.addAttribute("tradeBuyList", new TradeTest());
+    		model.addAttribute("tradeSellList", new TradeTest());
+    	}
+    	
+    	return "tradelist";
+    }
+    
+    @GetMapping("/mypage/tradelist/buy")
+    public String tradeBuyList(Model model) throws Exception {
+    	SiteUser currentUser = userService.getCurrentUser();
+    	
+    	if (currentUser != null) {
+    		String currentUsername = currentUser.getUsername();
+    		
+    		List<TradeTest> tradeBuyList = new ArrayList<>();
+    		tradeBuyList = tradeTestRepository.tradeBuyList(currentUsername);
+    		model.addAttribute("tradeBuyList", tradeBuyList);
+    		
+    	} else {
+    		model.addAttribute("tradeBuyList", new TradeTest());
+    	}
+    	
+    	return "tradelist :: tradeBuyTable";
+    }
+    
+    @GetMapping("/mypage/tradelist/buy/tradebuylist")
+    public List<TradeTest> getTradeList(@RequestParam String currentUsername) throws Exception {
+    	List<TradeTest> tradeList = tradeTestRepository.tradeBuyList(currentUsername);
+		return tradeList;
+    }
+    
+    @GetMapping("/mypage/tradelist/sell")
+    public String tradeSellList(Model model) throws Exception {
+    	SiteUser currentUser = userService.getCurrentUser();
+    	
+    	if (currentUser != null) {
+    		String currentUsername = currentUser.getUsername();
+    		
+    		List<TradeTest> tradeSellList = new ArrayList<>();
+    		tradeSellList = tradeTestRepository.tradeSellList(currentUsername);
+    		model.addAttribute("tradeSellList", tradeSellList);
+    		
+    	} else {
+    		model.addAttribute("tradeSellList", new TradeTest());
+    	}
+    	
+    	return "tradelist :: tradeSellTable";
+    }
+    
+//    @GetMapping("/coin/prices") // AJAX 구현을 위한 Price 데이터 전달 메소드
+//	public String getCoinPrices(Model model, @RequestParam String coinCode) throws Exception {
+//		List<Prices> priceList = new ArrayList<>();
+//		priceList = webPageService.findPriceList(coinCode); // 코인코드를 파라미터로 받아, DB 조회 후 가격 정보를 전달
+//		model.addAttribute("priceList", priceList);
+//		return "crytotest :: priceTable"; // thymeleaf AJAX 구현을 위해, 데이터가 변경될 떄 " :: ID" 추가
+//	}
+//
+//    @GetMapping("/coin/prices/priceslist") // AJAX 구현을 위한 Price 데이터 전달 메소드
+//    @ResponseBody // JSON 데이터를 반환하므로 @ResponseBody 어노테이션 추가
+//    public List<Prices> getCoinPricesList(@RequestParam String coinCode) throws Exception {
+//        List<Prices> priceList = webPageService.findPriceList(coinCode); // 코인코드를 파라미터로 받아, DB 조회 후 가격 정보를 전달
+//        return priceList;
+//    }
     
 }

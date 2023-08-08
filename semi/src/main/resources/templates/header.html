@@ -35,7 +35,7 @@
             <a th:href="@{/user/login}" sec:authorize="isAnonymous()" class="btn_1 d-none d-lg-block">로그인</a>
             <a th:href="@{/user/logout}" sec:authorize="isAuthenticated()" class="btn_1 d-none d-lg-block">로그아웃</a>
             <a th:href="@{/user/signup}" sec:authorize="isAnonymous()" class="btn_1 d-none d-lg-block">회원가입</a>
-            <a th:href="@{/user/mypage}" sec:authorize="isAuthenticated()" class="btn_1 d-none d-lg-block">마이페이지</a>
+            <a th:href="@{/mypage}" sec:authorize="isAuthenticated()" class="btn_1 d-none d-lg-block">마이페이지</a>
           </nav>
         </div>
           <div th:replace="~{tickertape :: tickertape}"></div>
