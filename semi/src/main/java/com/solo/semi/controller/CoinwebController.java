@@ -314,6 +314,7 @@ public class CoinwebController {
     	return "tradelist";
     }
     
+    // 모의투자 랭킹 데이터 전달
     @GetMapping("/api/ranking/{coinCode}")
     public ResponseEntity<List<UserRanking>> getRankingByCurrency(@PathVariable String coinCode) {
         List<Object[]> results = tradeTestRepository.getRankingByCoin(coinCode);
