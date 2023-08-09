@@ -173,7 +173,8 @@ h2.title,h2.title *.title {
     font-size: 20px;
     height: 20px;
     line-height: 20px;
-    margin-bottom: 40px
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 h2.title *.title {

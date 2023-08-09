@@ -18,12 +18,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.solo.semi.model.Coins;
+import com.solo.semi.model.CombinedData;
 import com.solo.semi.model.MyPage;
 import com.solo.semi.model.Prices;
 import com.solo.semi.model.SiteUser;
 import com.solo.semi.model.TradeTest;
+import com.solo.semi.model.UserRanking;
 import com.solo.semi.repository.MyPageRepository;
+import com.solo.semi.repository.PricesRepository;
 import com.solo.semi.repository.TradeTestRepository;
+import com.solo.semi.service.MyPageService;
 import com.solo.semi.service.TradeTestService;
 import com.solo.semi.service.UserService;
 import com.solo.semi.service.WebPageService;
@@ -35,11 +39,14 @@ import lombok.RequiredArgsConstructor;
 public class CoinwebController {
 	
 	private final WebPageService webPageService;
-	private final MyPageRepository myPageRepository;
-	private final TradeTestRepository tradeTestRepository;
 	private final UserService userService;
 	private final TradeTestService tradeTestService;
+	private final MyPageService myPageService;
+	private final MyPageRepository myPageRepository;
+	private final TradeTestRepository tradeTestRepository;
+	private final PricesRepository pricesRepository;
 	
+	// 모의투자 페이지
 	@GetMapping("/coin")
     public String coinPage(Model model) throws Exception {
         List<Coins> coinList = webPageService.findAllCoins();
@@ -66,6 +73,7 @@ public class CoinwebController {
         return "crytotest";
     }
 	
+	// 코인 리스트를 불러옴
 	@GetMapping("/coin/coinlist")
     @ResponseBody
     public ResponseEntity<List<Coins>> getCoinList() throws Exception {
@@ -78,6 +86,7 @@ public class CoinwebController {
         return ResponseEntity.ok(coinList); // 200 OK
     }
 	
+	// 1분당 코인 가격 변동 사항 리스트 날짜 내림차순으로 출력
 	@GetMapping("/coin/prices") // AJAX 구현을 위한 Price 데이터 전달 메소드
 	public String getCoinPrices(Model model, @RequestParam String coinCode) throws Exception {
 		List<Prices> priceList = new ArrayList<>();
@@ -93,6 +102,7 @@ public class CoinwebController {
         return priceList;
     }
     
+    // 마이페이지의 정보를 불러오는데 사용
     @GetMapping("/coin/prices/mypage")
     @ResponseBody
     public ResponseEntity<MyPage> getCoinMyPage() throws Exception {
@@ -112,6 +122,7 @@ public class CoinwebController {
         return ResponseEntity.ok(myPageOptional.get()); // 200 OK
     }
     
+    // 모의투자 페이지에서 매수 버튼을 눌렀을 경우
     @PostMapping("/coin/prices/buy")
     public ResponseEntity<?> buyCoinMyPage(@RequestBody MyPage request) {
     	SiteUser currentUser = userService.getCurrentUser();
@@ -157,6 +168,7 @@ public class CoinwebController {
         }
     }
     
+    // 모의투자 페이지에서 매도 버튼을 눌렀을 경우
     @PostMapping("/coin/prices/sell")
     public ResponseEntity<?> sellCoinMyPage(@RequestBody MyPage request) {
     	SiteUser currentUser = userService.getCurrentUser();
@@ -204,6 +216,7 @@ public class CoinwebController {
         }
     }
     
+    // 현재 최대 주문 가능 수량 계산
     @GetMapping("/maxquantity")
     public ResponseEntity<?> getMaxQuantity(@RequestParam String coinCode) throws Exception {
         List<Prices> priceList = webPageService.findPriceList(coinCode);
@@ -224,14 +237,14 @@ public class CoinwebController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in.");
         }
     }
-
+    
+    // 마이페이지 접속
     @GetMapping("/mypage")
     public String trade(Model model) throws Exception {
     	List<Coins> coinList = webPageService.findAllCoins();
         model.addAttribute("coinList", coinList);
         
         SiteUser currentUser = userService.getCurrentUser();
-
 
         if (currentUser != null) {
             String currentUsername = currentUser.getUsername();
@@ -268,6 +281,7 @@ public class CoinwebController {
     	return "mypage";
     }
     
+    // 마이페이지 -> 거래내역에서 버튼을 클릭했을때
     @GetMapping("/mypage/tradelist/{type}")
     public String tradeBuyList(@PathVariable String type, Model model) throws Exception {
     	SiteUser currentUser = userService.getCurrentUser();
@@ -300,4 +314,52 @@ public class CoinwebController {
     	return "tradelist";
     }
     
+    @GetMapping("/api/ranking/{coinCode}")
+    public ResponseEntity<List<UserRanking>> getRankingByCurrency(@PathVariable String coinCode) {
+        List<Object[]> results = tradeTestRepository.getRankingByCoin(coinCode);
+        List<UserRanking> rankingList = new ArrayList<>();
+
+        Double currentCoinPrice = pricesRepository.findTopByCoincodeOrderByDateDesc(coinCode).getPrice();
+
+        for (Object[] result : results) {
+            String username = (String) result[0];
+            Double profitLoss = (Double) result[2];
+            
+            CombinedData combinedData = myPageService.getCombinedData(username);
+
+            Optional<MyPage> myPageData = combinedData.getMyPage();
+            MyPage myPage = myPageData.get(); 
+
+            Double sumBtcTradePrice = 0.0;
+            Double sumEthTradePrice = 0.0;
+            
+            if ("BTC".equals(coinCode)) {
+                sumBtcTradePrice = tradeTestRepository.buyCoinSum("BTC", username);
+            } else {
+                sumEthTradePrice = tradeTestRepository.buyCoinSum("ETH", username);
+            }
+
+            Double evaluationAmount = (coinCode.equals("BTC") ? sumBtcTradePrice : sumEthTradePrice) * currentCoinPrice;
+            Double profitRate = (profitLoss / (coinCode.equals("BTC") ? sumBtcTradePrice : sumEthTradePrice)) * 100;
+
+            UserRanking ranking = new UserRanking(username, evaluationAmount, profitLoss, profitRate);
+            ranking.setSumBtcTradePrice(sumBtcTradePrice);
+            ranking.setSumEthTradePrice(sumEthTradePrice);
+            
+            if(myPageData != null) {
+                Double userBtc = myPage.getUserBtc();
+                Double userEth = myPage.getUserEth();
+
+                // 여기서 userBtc와 userEth를 사용하여 필요한 계산을 수행합니다.
+                ranking.setUserBtc(userBtc);
+                ranking.setUserEth(userEth);
+                // 예: ranking.setUserBtc(userBtc); ranking.setUserEth(userEth);
+            }
+
+            rankingList.add(ranking);
+        }
+
+        return ResponseEntity.ok(rankingList);
+    }
+       
 }

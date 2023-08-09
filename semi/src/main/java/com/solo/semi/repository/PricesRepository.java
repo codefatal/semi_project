@@ -12,4 +12,6 @@ public interface PricesRepository extends CrudRepository<Prices, Integer>{
 	List<Prices> findFirst10ByCoincodeOrderByDateDesc(String coincode);
 	
 	Long countByCoincode(String coincode); // 코인별 데이터 수 조회 
+	
+	Prices findTopByCoincodeOrderByDateDesc(String coinCode);
 }

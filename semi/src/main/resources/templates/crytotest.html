@@ -2,7 +2,7 @@
   <div layout:fragment="content" class="container">
 	<div class="container-left">
 		<h4 id="coinSelectDiv" class="container-left">
-			코인 선택 : <select id="coinSelect">
+			코인 선택 : <select id="coinSelect" class="coinSelect">
 				<option th:each="coin : ${coinList}" th:value="${coin.coincode}"
 					th:text="${coin.coinname}"></option>
 			</select>
@@ -42,7 +42,7 @@
 					</div>
 					<div class="BuySellTab_tabbox sellTabContent" style="display: none;">
 						<!-- 매도 탭 내용 -->
-						<span class="BuySellTab_available-price priceCoin" th:text="${#numbers.formatDecimal(myPage.userBtc, 1, 5)} + ' BTC'"></span>
+						<span class="BuySellTab_available-price priceCoin" th:text="${myPage.userBtc} + ' BTC'"></span>
 					</div>
 				</div>
 				<div class="OrderForm">
@@ -69,7 +69,7 @@
 						</dl>
 						<dl class="OrderForm_max-order sellTabContent" style="display: none;">
 							<dt>최대 매도 가능 금액</dt>
-							<dd class="maxQuantityBuy" th:text="${#numbers.formatDecimal(myPage.userBtc*priceList[0].price, 1, 1)}"></dd>
+							<dd class="maxQuantitySell" th:text="${#numbers.formatDecimal(myPage.userBtc*priceList[0].price, 1, 1)}"></dd>
 						</dl>
 					</div>
 					<div class="OrderForm_row">
@@ -112,12 +112,12 @@
 				<!-- 매수 버튼 -->
 				<div class="ButtonRow ButtonRowBuyContent">
 					<button class="Button_JtY Button_large Button_row_buy">
-					<span class="Button_text">BTC 매수</span></button>
+					<span class="Button_text Button_text_buy">BTC 매수</span></button>
 				</div>
 				<!-- 매도 버튼 -->
 				<div class="ButtonRow ButtonRowSellContent" style="display: none;">
 				<button class="Button_JtY Button_large Button_row_sell">
-					<span class="Button_text">BTC 매도</span></button>
+					<span class="Button_text Button_text_sell">BTC 매도</span></button>
 				</div>
 			</div>
 		</div>
