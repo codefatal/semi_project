@@ -28,7 +28,9 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/")
                         .invalidateHttpSession(true))
 		        .csrf((csrf) -> csrf
-		                .ignoringAntMatchers("/coin/prices/buy", "/coin/prices/sell"));
+		                .ignoringAntMatchers("/coin/prices/buy", "/coin/prices/sell"))
+		        .sessionManagement((session) -> session
+                	.invalidSessionUrl("/")); // 세션이 유효하지 않을 때 메인 페이지로 리다이렉트
         return http.build();
     }
 

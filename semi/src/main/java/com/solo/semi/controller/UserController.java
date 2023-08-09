@@ -5,6 +5,10 @@ import javax.validation.Valid;
 import com.solo.semi.model.UserCreateForm;
 import com.solo.semi.service.UserService;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 
     private final UserService userService;
+    private final AuthenticationManager authenticationManager;
 
     @GetMapping("/signup")
     public String signup(UserCreateForm userCreateForm) {
@@ -38,6 +43,13 @@ public class UserController {
         try {
             userService.create(userCreateForm.getUsername(),
                     userCreateForm.getEmail(), userCreateForm.getPassword1());
+            // 회원가입 후 자동 로그인 처리
+            Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                    userCreateForm.getUsername(), userCreateForm.getPassword1()
+                )
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch(DataIntegrityViolationException e) {
             e.printStackTrace();
             bindingResult.reject("signupFailed", "이미 등록된 사용자입니다.");
