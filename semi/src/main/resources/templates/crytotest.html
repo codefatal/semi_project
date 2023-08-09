@@ -38,11 +38,11 @@
 					<h4 class="BuySellTab_row_title BuySellTab_title-top">주문가능</h4>
 					<div class="BuySellTab_tabbox buyTabContent">
 						<!-- 매수 탭 내용 -->
-						<span class="BuySellTab_available-price" th:text="${#numbers.formatInteger(myPage.money, 0, 'COMMA')} + ' 원'"></span>
+						<span class="BuySellTab_available-price priceMoney" th:text="${#numbers.formatInteger(myPage.money, 0, 'COMMA')} + ' 원'"></span>
 					</div>
 					<div class="BuySellTab_tabbox sellTabContent" style="display: none;">
 						<!-- 매도 탭 내용 -->
-						<span class="BuySellTab_available-price" th:text="${myPage.userBtc} + ' BTC'"></span>
+						<span class="BuySellTab_available-price priceCoin" th:text="${#numbers.formatDecimal(myPage.userBtc, 1, 5)} + ' BTC'"></span>
 					</div>
 				</div>
 				<div class="OrderForm">

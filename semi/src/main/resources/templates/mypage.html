@@ -14,20 +14,20 @@
 						<th>- 총 보유자산</th>
 						<td class="tx_r">
 							<span class="tx_total_rate tx_sum_value total-money" th:text="${#numbers.formatInteger(myPage.money 
-							+ (myPage.userBtc*priceList[0].price) + (myPage.userEth*priceList[0].price), 0, 'COMMA')} +' 원'"></span></td>
+							+ (myPage.userBtc*BTCpriceList[0].price) + (myPage.userEth*ETHpriceList[0].price), 0, 'COMMA')} +' 원'"></span></td>
 					</tr>
 					<tr>
 						<th>- 총 수익률</th>
 						<td class="tx_r"><span class="tx_total_rate tx_sum_value total-rate" th:text="${(sumBtcTradePrice + sumEthTradePrice) == 0 ? '0' 
-									: #numbers.formatDecimal((((myPage.userBtc*priceList[0].price) - sumBtcTradePrice) 
-									+ ((myPage.userEth*priceList[0].price) - sumEthTradePrice)) 
+									: #numbers.formatDecimal((((myPage.userBtc*BTCpriceList[0].price) - sumBtcTradePrice) 
+									+ ((myPage.userEth*ETHpriceList[0].price) - sumEthTradePrice)) 
 									/ (sumBtcTradePrice + sumEthTradePrice) * 100, 1, 2) + '%'}"></span></td>
 					</tr>
 					<tr>
 						<th>- 총 평가손익 (KRW)</th>
 						<td class="tx_r"><span class="tx_total_value tx_sum_value total-profit"
-								 th:text="${#numbers.formatInteger(((myPage.userBtc*priceList[0].price)-sumBtcTradePrice)
-														+((myPage.userEth*priceList[0].price)-sumEthTradePrice), 0, 'COMMA')}"> <span>원</span></span></td>
+								 th:text="${#numbers.formatInteger(((myPage.userBtc*BTCpriceList[0].price)-sumBtcTradePrice)
+														+((myPage.userEth*ETHpriceList[0].price)-sumEthTradePrice), 0, 'COMMA')}"> <span>원</span></span></td>
 					</tr>
 				</tbody>
 			</table>
@@ -40,7 +40,7 @@
 					<tr>
 						<th>- 총 보유자산(BTC 환산)</th>
 						<td class="tx_r">
-							<span class="tx_total_rate tx_sum_value total-moneybtc" th:text="'≈ ' + ${#numbers.formatDecimal((myPage.money/priceList[0].price) 
+							<span class="tx_total_rate tx_sum_value total-moneybtc" th:text="'≈ ' + ${#numbers.formatDecimal((myPage.money/BTCpriceList[0].price) 
 							+ myPage.userBtc + myPage.userEth, 1, 9)} + ' BTC'	"></span></td>
 					</tr>
 					<tr>
@@ -58,7 +58,7 @@
 		</div>
 		<div id="coinSearchBox">
 			<div class="search_wrap">
-				<a th:href="@{/mypage/tradelist}" class="ab_r btn btn_org_line_o">거래내역</a>
+				<a th:href="@{/mypage/tradelist/all}" class="ab_r btn btn_org_line_o">거래내역</a>
 			</div>
 			<table class="table_st1" data-verification="ASSETS_ASSETS_TABLE">
 				<colgroup>
@@ -91,9 +91,9 @@
 							</div>
 						</td>
 						<td class="tx_r"><span class="tx_buy_pic" th:text="${#numbers.formatInteger(sumBtcTradePrice, 0, 'COMMA')}"></span></td>
-						<td class="tx_r"> <span class="tx_krw_pic" th:text="${#numbers.formatInteger(myPage.userBtc*priceList[0].price, 0, 'COMMA')}"></span></td>
-						<td class="tx_r"><span class="tx_value" th:text="${#numbers.formatInteger((myPage.userBtc*priceList[0].price)-sumBtcTradePrice, 0, 'COMMA')}"></span></td>
-						<td class="tx_r"><span class="tx_rate" th:text="${myPage.userBtc == 0 ? '0' : #numbers.formatDecimal((myPage.userBtc*priceList[0].price - sumBtcTradePrice) / sumBtcTradePrice * 100, 1, 2) + '%'}"></span></td>
+						<td class="tx_r"> <span class="tx_krw_pic" th:text="${#numbers.formatInteger(myPage.userBtc*BTCpriceList[0].price, 0, 'COMMA')}"></span></td>
+						<td class="tx_r"><span class="tx_value" th:text="${#numbers.formatInteger((myPage.userBtc*BTCpriceList[0].price)-sumBtcTradePrice, 0, 'COMMA')}"></span></td>
+						<td class="tx_r"><span class="tx_rate" th:text="${myPage.userBtc == 0 ? '0' : #numbers.formatDecimal((myPage.userBtc*BTCpriceList[0].price - sumBtcTradePrice) / sumBtcTradePrice * 100, 1, 2) + '%'}"></span></td>
 					</tr>
 					<tr data-asset="0" data-coin="ETH" data-key="C0102" data-live="Y" class="fvtWrap">
 						<td>이더리움<br><span class="code">ETH</span><span class="blind">이더리움ETHㅇㄷㄹㅇ</span></td>
@@ -104,9 +104,9 @@
 							</div>
 						</td>
 						<td class="tx_r"><span class="tx_buy_pic" th:text="${#numbers.formatInteger(sumEthTradePrice, 0, 'COMMA')}"></span></td>
-						<td class="tx_r"><span class="tx_krw_pic" th:text="${#numbers.formatInteger(myPage.userEth*priceList[0].price, 0, 'COMMA')}"></span></td>
-						<td class="tx_r"><span class="tx_value" th:text="${#numbers.formatInteger((myPage.userEth*priceList[0].price)-sumEthTradePrice, 0, 'COMMA')}"></span></td>
-						<td class="tx_r"><span class="tx_rate" th:text="${myPage.userEth == 0 ? '0' : #numbers.formatDecimal((myPage.userEth*priceList[0].price - sumEthTradePrice) / sumEthTradePrice * 100, 1, 2) + '%'}"></span></td>
+						<td class="tx_r"><span class="tx_krw_pic" th:text="${#numbers.formatInteger(myPage.userEth*ETHpriceList[0].price, 0, 'COMMA')}"></span></td>
+						<td class="tx_r"><span class="tx_value" th:text="${#numbers.formatInteger((myPage.userEth*ETHpriceList[0].price)-sumEthTradePrice, 0, 'COMMA')}"></span></td>
+						<td class="tx_r"><span class="tx_rate" th:text="${myPage.userEth == 0 ? '0' : #numbers.formatDecimal((myPage.userEth*ETHpriceList[0].price - sumEthTradePrice) / sumEthTradePrice * 100, 1, 2) + '%'}"></span></td>
 					</tr>
 				</tbody>
 			</table>

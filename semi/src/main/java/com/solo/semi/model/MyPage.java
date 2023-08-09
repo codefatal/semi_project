@@ -36,4 +36,7 @@ public class MyPage {
     @Transient
     private double orderAmount;
     
+    @Transient
+    private String coincode;
+    
 }

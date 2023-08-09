@@ -2,6 +2,7 @@ $(document).ready(function() {
     let myPageData;  // myPage 데이터를 저장하기 위한 전역 변수를 선언합니다.
     let priceLista;
     let priceListb;
+    let coinMapping = {};
 
     // myPage 정보를 가져오는 AJAX 요청
     $.ajax({
@@ -13,8 +14,7 @@ $(document).ready(function() {
             myPageData = response;
             
             // myPageData 설정 후 priceList 요청 시작
-            fetchBtcPriceList();
-            fetchEthPriceList();
+            fetchPriceListBasedOnSelectedCoin();
         },
         error: function(xhr, status, error) {
             if(xhr.status === 403) {
@@ -23,6 +23,86 @@ $(document).ready(function() {
                 console.error("Error occurred while fetching myPage data:", error);
             }
         }
+    });
+    
+    function fetchPriceListBasedOnSelectedCoin() {
+	    const selectedCoin = $("#coinSelect").val();
+	    switch(selectedCoin) {
+	        case 'BTC':
+	            fetchBtcPriceList();
+	            break;
+	        case 'ETH':
+	            fetchEthPriceList();
+	            break;
+	        // 다른 코인들에 대해서도 동일하게 추가 가능
+	        default:
+	            console.error('Unknown coin selected.');
+	            return;
+	    }
+	}
+	
+	$.ajax({
+	    url: "/coin/coinlist",
+	    type: "GET",
+	    dataType: "json",
+	    success: function(data) {
+	        data.forEach(coinList => {
+	            coinMapping[coinList.coinname] = coinList.coincode;
+	        });
+
+	        initializeCoinSelectListener();
+	    },
+	    error: function(error) {
+	        console.error("Failed to fetch coin data:", error);
+	    }
+	});
+	
+	$("#coinSelect").on('change', function() {
+	    fetchPriceListBasedOnSelectedCoin();
+	});
+	
+	function updateCoinValueDisplay(coinCode) {
+	    let value, text;
+	    switch (coinCode) {
+	        case "BTC":
+	            value = myPageData.userBtc;
+	            text = "BTC";
+	            break;
+	        case "ETH":
+	            value = myPageData.userEth;
+	            text = "ETH";
+	            break;
+	        // 여기에 다른 코인들도 추가 가능합니다.
+	        default:
+	            console.error("Unsupported coin code:", coinCode);
+	            return;
+	    }
+	    $(".priceCoin").text(`${value} ${text}`);
+	}
+	
+	$('#coinSelect').change(function() {
+        // 선택한 코인의 이름을 가져옵니다.
+        const selectedCoinName = $(this).find('option:selected').text();
+        const selectedCoinCode = coinMapping[selectedCoinName];
+        const selectedCoin = $(this).val();
+        updateCoinValueDisplay(selectedCoin);
+        
+        // 버튼 이름 변경
+        $('.Orders_tabbtn[data-tab="buy"]').text(selectedCoinCode + ' 매수');
+        $('.Orders_tabbtn[data-tab="sell"]').text(selectedCoinCode + ' 매도');
+
+        // BuySellTab_available-price의 내용 변경
+        $('.BuySellTab_available-price').text(function() {
+            return $(this).text().replace('BTC', selectedCoinCode);
+        });
+
+        // InputBox_sub-txt의 내용 변경
+        $('.InputBox_sub-txt').text(selectedCoinCode);
+
+        // Button_text의 내용 변경
+        $('.Button_text').text(function() {
+            return $(this).text().replace('BTC', selectedCoinCode);
+        });
     });
     
     function fetchBtcPriceList() {
@@ -85,6 +165,7 @@ $(document).ready(function() {
 	
 	// AJAX 요청을 보내서 priceList를 가져옵니다. 
     function setOrderPercentage(priceList, percentage) {
+		const selectedCoinCode = $("#coinSelect").val();
         let maxOrderQuantity;
 
         // 현재 선택된 탭을 확인
@@ -95,12 +176,17 @@ $(document).ready(function() {
             maxOrderQuantity = myPageData.money / priceList[0].price;
         } else {
             // 매도일 때의 계산
-            maxOrderQuantity = myPageData.userBtc ;
+            if (selectedCoinCode === "BTC") {
+		        maxOrderQuantity = myPageData.userBtc;
+		    } else if (selectedCoinCode === "ETH") {
+		        maxOrderQuantity = myPageData.userEth;
+		    }
         }
 
         const orderQuantity = (percentage / 100) * maxOrderQuantity;
+        const truncatedOrderQuantity = Math.floor(orderQuantity * Math.pow(10, 5)) / Math.pow(10, 5);
 
-        $('#orderQuantitySecondary').val(orderQuantity.toFixed(4));
+        $('#orderQuantitySecondary').val(truncatedOrderQuantity.toFixed(5));
         calculateOrderAmount(priceList);
     }
 
@@ -154,17 +240,27 @@ $(document).ready(function() {
 	
 	// 최대치 이상 설정 금지
 	$('.orderQuantityInput').on('input', function() {
+		const selectedCoinCode = $("#coinSelect").val();
 	    let maxOrderQuantity;
-	    const rawPricePerBTC = priceLista[0] && priceLista[0].price ? priceLista[0].price : 0;
-		const pricePerBTC = Math.floor(rawPricePerBTC * 100000) / 100000.0;
+	    let rawPricePer;
+		if (selectedCoinCode === "BTC") {
+	        rawPricePer = priceLista[0] && priceLista[0].price ? priceLista[0].price : 0;
+	    } else if (selectedCoinCode === "ETH") {
+	        rawPricePer = priceListb[0] && priceListb[0].price ? priceListb[0].price : 0;
+	    }
+	    const pricePer = Math.floor(rawPricePer * 100000) / 100000.0;
 	
 	    // 매수 탭이 선택된 경우
 	    if ($('.Orders_tabitem[aria-selected="true"] .Orders_tabbtn').data('tab') === "buy") {
-	        maxOrderQuantity = myPageData.money / pricePerBTC;
+	        maxOrderQuantity = myPageData.money / pricePer;
 	    } 
 	    // 매도 탭이 선택된 경우
 	    else if ($('.Orders_tabitem[aria-selected="true"] .Orders_tabbtn').data('tab') === "sell") {
-	        maxOrderQuantity = myPageData.userBtc;
+	        if (selectedCoinCode === "BTC") {
+		        maxOrderQuantity = myPageData.userBtc;
+		    } else if (selectedCoinCode === "ETH") {
+		        maxOrderQuantity = myPageData.userEth;
+		    }
 	    }
 	
 	    let inputValue = parseFloat($(this).val());
@@ -174,15 +270,22 @@ $(document).ready(function() {
 	        $(this).val(maxOrderQuantity);
 	    }
 	});
-		
-	// BTC 매수 버튼 클릭 이벤트 추가
+	
+	// 매수 버튼 클릭 이벤트 추가
     $('.Button_row_buy').on('click', function() {
         // 주문 금액 및 주문 수량 값을 가져옵니다.
+        const selectedCoinCode = $("#coinSelect").val();
         const orderAmount = parseFloat($('#orderAmount').val().replace('원', '').replace(/,/g, '')) || 0;
         const orderQuantity = parseFloat($('#orderQuantitySecondary').val()) || 0;
-        const rawPricePerBTC = priceLista[0] && priceLista[0].price ? priceLista[0].price : 0;
-		const pricePerBTC = Math.floor(rawPricePerBTC * 100000) / 100000.0;
-
+        let rawPricePer;
+		if (selectedCoinCode === "BTC") {
+	        rawPricePer = priceLista[0] && priceLista[0].price ? priceLista[0].price : 0;
+	    } else if (selectedCoinCode === "ETH") {
+	        rawPricePer = priceListb[0] && priceListb[0].price ? priceListb[0].price : 0;
+	    }
+	    const pricePer = Math.floor(rawPricePer * 100000) / 100000.0;
+		
+		console.log(selectedCoinCode);
         // 주문금액이 사용자의 보유금액보다 많으면 매수를 진행하지 않습니다.
         if(orderQuantity > myPageData.money) {
             alert("매수하려는 주문금액이 보유금액보다 많습니다!");
@@ -191,7 +294,11 @@ $(document).ready(function() {
 
         // myPage.money에서 주문금액을 빼고, myPage.userBtc에 주문수량을 더합니다.
         myPageData.money = myPageData.money - orderAmount;
-        myPageData.userBtc = myPageData.userBtc + orderQuantity;
+        if (selectedCoinCode === "BTC") {
+	        myPageData.userBtc = myPageData.userBtc + orderQuantity;
+	    } else if (selectedCoinCode === "ETH") {
+	        myPageData.userEth = myPageData.userEth + orderQuantity;
+	    }
         
         $.ajax({
             url: "/coin/prices/buy", 
@@ -199,13 +306,93 @@ $(document).ready(function() {
             contentType: "application/json; charset=utf-8",  // 이 부분 추가
     		dataType: "json",  // 이 부분 추가
             data: JSON.stringify ({
+				coincode: selectedCoinCode,
                 money: myPageData.money,
                 userBtc: myPageData.userBtc,
-                price: pricePerBTC,
+                userEth: myPageData.userEth,
+                price: pricePer,
                 orderAmount: orderAmount
             }),
             success: function(response) {
                 console.log("Data updated successfully!", response);
+                
+                // 서버 응답을 기반으로 클라이언트 상태 업데이트
+	            myPageData.money = response.money;
+	            myPageData.userBtc = response.userBtc;
+	            myPageData.userEth = response.userEth;
+               
+                // 서버로부터 받은 redirectUrl을 사용하여 페이지를 새로고침하거나 리다이렉트 수행
+		        if (response.redirectUrl) {
+		            window.location.href = response.redirectUrl;
+		        }
+            },
+            error: function(err) {
+                console.error("Failed to update data.", err);
+            }
+        });
+
+        // 업데이트된 값을 콘솔에 출력합니다 (데모용).
+        console.log("Updated myPage data:", myPageData);
+
+        // 여기서 필요한 경우 서버에 업데이트된 데이터를 저장하거나 페이지를 갱신할 수 있습니다.
+    });
+    
+    // 매도 버튼 클릭 이벤트 추가
+    $('.Button_row_sell').on('click', function() {
+        // 주문 금액 및 주문 수량 값을 가져옵니다.
+        const selectedCoinCode = $("#coinSelect").val();
+        const orderAmount = parseFloat($('#orderAmount').val().replace('원', '').replace(/,/g, '')) || 0;
+        const orderQuantity = parseFloat($('#orderQuantitySecondary').val()) || 0;
+		let rawPricePer;
+		if (selectedCoinCode === "BTC") {
+	        rawPricePer = priceLista[0] && priceLista[0].price ? priceLista[0].price : 0;
+	    } else if (selectedCoinCode === "ETH") {
+	        rawPricePer = priceListb[0] && priceListb[0].price ? priceListb[0].price : 0;
+	    }
+	    const pricePer = Math.floor(rawPricePer * 100000) / 100000.0;
+		
+		
+        // 주문 수량이 사용자의 코인 보유량보다 많으면 매도를 진행하지 않습니다.
+        if(selectedCoinCode === "BTC") {
+	        if(orderQuantity > myPageData.userBtc) {
+	            alert("매도하려는 비트코인 수량이 보유량보다 많습니다!");
+	            return;
+	        }
+		} else if(selectedCoinCode === "ETH") {
+	        if(orderQuantity > myPageData.userEth) {
+	            alert("매도하려는 이더리움 수량이 보유량보다 많습니다!");
+	            return;
+	        }			
+		}
+
+        // myPage.money에 주문금액을 더하고, myPage.userBtc에서 주문수량을 뺍니다.
+        myPageData.money = myPageData.money + orderAmount;
+        if (selectedCoinCode === "BTC") {
+	        myPageData.userBtc = myPageData.userBtc - orderQuantity;
+	    } else if (selectedCoinCode === "ETH") {
+	        myPageData.userEth = myPageData.userEth - orderQuantity;
+	    }
+        
+        $.ajax({
+            url: "/coin/prices/sell", 
+            method: "POST",
+            contentType: "application/json; charset=utf-8",  // 이 부분 추가
+    		dataType: "json",  // 이 부분 추가
+            data: JSON.stringify ({
+                coincode: selectedCoinCode,
+                money: myPageData.money,
+                userBtc: myPageData.userBtc,
+                userEth: myPageData.userEth,
+                price: pricePer,
+                orderAmount: orderAmount
+            }),
+            success: function(response) {
+                console.log("Data updated successfully!", response);
+                
+                // 서버 응답을 기반으로 클라이언트 상태 업데이트
+	            myPageData.money = response.money;
+	            myPageData.userBtc = response.userBtc;
+	            myPageData.userEth = response.userEth;
                 
                 // 서버로부터 받은 redirectUrl을 사용하여 페이지를 새로고침하거나 리다이렉트 수행
 		        if (response.redirectUrl) {
@@ -223,53 +410,22 @@ $(document).ready(function() {
         // 여기서 필요한 경우 서버에 업데이트된 데이터를 저장하거나 페이지를 갱신할 수 있습니다.
     });
     
-    // BTC 매도 버튼 클릭 이벤트 추가
-    $('.Button_row_sell').on('click', function() {
-        // 주문 금액 및 주문 수량 값을 가져옵니다.
-        const orderAmount = parseFloat($('#orderAmount').val().replace('원', '').replace(/,/g, '')) || 0;
-        const orderQuantity = parseFloat($('#orderQuantitySecondary').val()) || 0;
-        const rawPricePerBTC = priceLista[0] && priceLista[0].price ? priceLista[0].price : 0;
-		const pricePerBTC = Math.floor(rawPricePerBTC * 100000) / 100000.0;
-
-        // 주문 수량이 사용자의 BTC 보유량보다 많으면 매도를 진행하지 않습니다.
-        if(orderQuantity > myPageData.money) {
-            alert("매도하려는 비트코인 수량이 보유량보다 많습니다!");
-            return;
-        }
-
-        // myPage.money에 주문금액을 더하고, myPage.userBtc에서 주문수량을 뺍니다.
-        myPageData.money = myPageData.money + orderAmount;
-        myPageData.userBtc = myPageData.userBtc - orderQuantity;
-        
-        $.ajax({
-            url: "/coin/prices/sell", 
-            method: "POST",
-            contentType: "application/json; charset=utf-8",  // 이 부분 추가
-    		dataType: "json",  // 이 부분 추가
-            data: JSON.stringify ({
-                money: myPageData.money,
-                userBtc: myPageData.userBtc,
-                price: pricePerBTC,
-                orderAmount: orderAmount
-            }),
-            success: function(response) {
-                console.log("Data updated successfully!", response);
-                
-                // 서버로부터 받은 redirectUrl을 사용하여 페이지를 새로고침하거나 리다이렉트 수행
-		        if (response.redirectUrl) {
-		            window.location.href = response.redirectUrl;
-		        }
-            },
-            error: function(err) {
-                console.error("Failed to update data.", err);
-            }
-        });
-
-        // 업데이트된 값을 콘솔에 출력합니다 (데모용).
-        console.log("Updated myPage data:", myPageData);
-
-        // 여기서 필요한 경우 서버에 업데이트된 데이터를 저장하거나 페이지를 갱신할 수 있습니다.
-    });
+    $("#coinSelect").change(function() {
+	    const selectedCoinCode = $(this).val();
+	    resetOrderInputs();
+	    
+	    $.ajax({
+	        url: "/maxquantity",
+	        method: "GET",
+	        data: { coinCode: selectedCoinCode },
+	        success: function(data) {
+	            $(".maxQuantityBuy").text(data);
+	        },
+	        error: function(err) {
+	            console.error("Failed to fetch max quantity.", err);
+	        }
+	    });
+	});
     
     // 전체수익률
     let totalRate = parseFloat($(".total-rate").text());

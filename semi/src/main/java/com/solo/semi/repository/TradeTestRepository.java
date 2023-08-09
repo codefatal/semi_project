@@ -30,6 +30,9 @@ public interface TradeTestRepository extends CrudRepository<TradeTest, String> {
 	@Query("SELECT nvl(avg(tradeCoinMoney),0) from TradeTest tt where tt.coincode = :coincode AND tt.username = :username AND tt.tradeType = 1")
 	Double buyCoinAvg(@Param("coincode") String coincode, @Param("username") String username);
 	
+	@Query("SELECT tt FROM TradeTest tt WHERE tt.username = :username ORDER BY tt.date DESC")
+	List<TradeTest> tradeList(@Param("username") String username);
+
 	@Query("SELECT tt FROM TradeTest tt WHERE tt.username = :username AND tt.tradeType = 1 ORDER BY tt.date DESC")
 	List<TradeTest> tradeBuyList(@Param("username") String username);
 	

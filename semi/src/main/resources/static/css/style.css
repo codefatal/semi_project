@@ -2245,8 +2245,9 @@ ul {
 
 /* line 33, /Applications/MAMP/htdocs/palash/cl/july 2019/193 Travel/193 travel html/sass/_menu.scss */
 .main_menu .main-menu-item ul li .nav-link {
-  color: #0c3e72;
-  font-size: 16px;
+  color: #000;
+  font-size: 18px;
+  font-weight: bold;
   padding: 38px 22px;
   font-family: "Open Sans", sans-serif;
   text-transform: capitalize;
@@ -3760,7 +3761,7 @@ ul {
 /* line 2, /Applications/MAMP/htdocs/palash/cl/july 2019/193 Travel/193 travel html/sass/_footer.scss */
 .footer-area {
   background-color: #162b45;
-  padding: 130px 0px 0px;
+  padding: 50px 0px 0px;
   position: relative;
 }
 

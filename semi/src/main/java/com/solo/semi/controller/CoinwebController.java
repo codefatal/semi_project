@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -65,6 +66,18 @@ public class CoinwebController {
         return "crytotest";
     }
 	
+	@GetMapping("/coin/coinlist")
+    @ResponseBody
+    public ResponseEntity<List<Coins>> getCoinList() throws Exception {
+		List<Coins> coinList = webPageService.findAllCoins();
+        
+        if (coinList.isEmpty()) {
+            return ResponseEntity.notFound().build(); // 404 Not Found
+        }
+
+        return ResponseEntity.ok(coinList); // 200 OK
+    }
+	
 	@GetMapping("/coin/prices") // AJAX 구현을 위한 Price 데이터 전달 메소드
 	public String getCoinPrices(Model model, @RequestParam String coinCode) throws Exception {
 		List<Prices> priceList = new ArrayList<>();
@@ -115,15 +128,24 @@ public class CoinwebController {
             MyPage myPage = myPageOptional.get();
             // myPage에 request에서 받은 money 및 userBtc를 사용하여 업데이트
             myPage.setMoney(request.getMoney());
-            myPage.setUserBtc(request.getUserBtc());
+            
+            // 받은 코인 코드를 기반으로 userBtc 또는 userEth를 업데이트
+            String coinCode = request.getCoincode();
+            double usercoin = 0.0;
+            if ("BTC".equals(coinCode)) {
+                myPage.setUserBtc(request.getUserBtc());
+                usercoin = request.getUserBtc();
+            } else if ("ETH".equals(coinCode)) {
+                myPage.setUserEth(request.getUserEth());
+                usercoin = request.getUserEth();
+            }
             
             // myPage 저장
             myPageRepository.save(myPage);
             
-            String coinCode = "BTC";
             int tradetype = 1;
             
-            tradeTestService.tradeTestLog(coinCode, tradetype, request.getOrderAmount(), request.getUserBtc(), request.getPrice());
+            tradeTestService.tradeTestLog(coinCode, tradetype, request.getOrderAmount(), usercoin, request.getPrice());
             // JSON 응답을 사용하여 리다이렉트를 권장
             Map<String, String> response = new HashMap<>();
             response.put("message", "Updated successfully.");
@@ -152,12 +174,21 @@ public class CoinwebController {
             
             // myPage에 request에서 받은 money 및 userBtc를 사용하여 업데이트
             myPage.setMoney(request.getMoney());
-            myPage.setUserBtc(request.getUserBtc());
             
-            String coinCode = "BTC";
+            // 받은 코인 코드를 기반으로 userBtc 또는 userEth를 업데이트
+            String coinCode = request.getCoincode();
+            double usercoin = 0.0;
+            if ("BTC".equals(coinCode)) {
+                myPage.setUserBtc(request.getUserBtc());
+                usercoin = request.getUserBtc();
+            } else if ("ETH".equals(coinCode)) {
+                myPage.setUserEth(request.getUserEth());
+                usercoin = request.getUserEth();
+            }
+            
             int tradetype = 2;
             
-            tradeTestService.tradeTestLog(coinCode, tradetype, request.getOrderAmount(), request.getUserBtc(), request.getPrice());
+            tradeTestService.tradeTestLog(coinCode, tradetype, request.getOrderAmount(), usercoin, request.getPrice());
 
             // myPage 저장
             myPageRepository.save(myPage);
@@ -173,15 +204,31 @@ public class CoinwebController {
         }
     }
     
+    @GetMapping("/maxquantity")
+    public ResponseEntity<?> getMaxQuantity(@RequestParam String coinCode) throws Exception {
+        List<Prices> priceList = webPageService.findPriceList(coinCode);
+        if (priceList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Price not found for coin code: " + coinCode);
+        }
+
+        SiteUser currentUser = userService.getCurrentUser();
+        if (currentUser != null) {
+            Optional<MyPage> myPageOptional = myPageRepository.findByUsername(currentUser.getUsername());
+            MyPage myPage = myPageOptional.orElse(new MyPage());
+
+            double maxQuantity = myPage.getMoney() / priceList.get(0).getPrice();
+            double maxQuantityRoundedDown = Math.floor(maxQuantity * 100000) / 100000.0;
+
+            return ResponseEntity.ok(maxQuantityRoundedDown);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in.");
+        }
+    }
 
     @GetMapping("/mypage")
     public String trade(Model model) throws Exception {
     	List<Coins> coinList = webPageService.findAllCoins();
         model.addAttribute("coinList", coinList);
-
-        List<Prices> priceList = new ArrayList<>();
-        priceList = webPageService.findPriceList(coinList.get(0).getCoincode());
-        model.addAttribute("priceList", priceList);
         
         SiteUser currentUser = userService.getCurrentUser();
 
@@ -193,6 +240,12 @@ public class CoinwebController {
             // 전체 계산
             Double sumTradePrice = tradeTestRepository.buySum(currentUsername);
             model.addAttribute("sumTradePrice", sumTradePrice);
+            
+            for (Coins coin : coinList) {
+                List<Prices> priceList = webPageService.findPriceList(coin.getCoincode());
+                model.addAttribute(coin.getCoincode() + "priceList", priceList);
+            }
+            
             // BTC 계산
             String BTC = "BTC";
             Double sumBtcTradePrice = tradeTestRepository.buyCoinSum(BTC, currentUsername);
@@ -200,15 +253,13 @@ public class CoinwebController {
             Double avgBtcTradePrice = tradeTestRepository.buyCoinAvg(BTC, currentUsername);
             model.addAttribute("avgBtcTradePrice", avgBtcTradePrice);
             
+            // ETH 계산
             String ETH = "ETH";
             Double sumEthTradePrice = tradeTestRepository.buyCoinSum(ETH, currentUsername);
             model.addAttribute("sumEthTradePrice", sumEthTradePrice);
             Double avgEthTradePrice = tradeTestRepository.buyCoinAvg(ETH, currentUsername);
             model.addAttribute("avgEthTradePrice", avgEthTradePrice);
-            
-            double maxQuantity = myPage.getMoney() / priceList.get(0).getPrice();
-            double maxQuantityRoundedDown = Math.floor(maxQuantity * 100000) / 100000.0;
-            model.addAttribute("maxQuantityRoundedDown", maxQuantityRoundedDown);
+
             model.addAttribute("myPage", myPage);
         } else {
             model.addAttribute("myPage", new MyPage()); // 미인증 사용자인 경우 빈 MyPage 객체를 추가
@@ -217,83 +268,36 @@ public class CoinwebController {
     	return "mypage";
     }
     
-    @GetMapping("/mypage/tradelist")
-    public String tradeList(Model model) throws Exception {
-		SiteUser currentUser = userService.getCurrentUser();
+    @GetMapping("/mypage/tradelist/{type}")
+    public String tradeBuyList(@PathVariable String type, Model model) throws Exception {
+    	SiteUser currentUser = userService.getCurrentUser();
     	
     	if (currentUser != null) {
     		String currentUsername = currentUser.getUsername();
     		
-    		List<TradeTest> tradeBuyList = new ArrayList<>();
-    		tradeBuyList = tradeTestRepository.tradeBuyList(currentUsername);
-    		model.addAttribute("tradeBuyList", tradeBuyList);
-    		List<TradeTest> tradeSellList = new ArrayList<>();
-    		tradeSellList = tradeTestRepository.tradeSellList(currentUsername);
-    		model.addAttribute("tradeSellList", tradeSellList);
+    		List<TradeTest> tradeList = new ArrayList<>();
     		
+    		switch(type) {
+	            case "all":
+	            	tradeList = tradeTestRepository.tradeList(currentUsername);
+	                break;
+	            case "buy":
+	            	tradeList = tradeTestRepository.tradeBuyList(currentUsername);
+	                break;
+	            case "sell":
+	            	tradeList = tradeTestRepository.tradeSellList(currentUsername);
+	                break;
+	            default:
+	                // Handle unknown type
+	                break;
+    		}
+    		model.addAttribute("tradeList", tradeList);
+    		model.addAttribute("currentUsername", currentUsername);
     	} else {
-    		model.addAttribute("tradeBuyList", new TradeTest());
-    		model.addAttribute("tradeSellList", new TradeTest());
+    		model.addAttribute("tradeList", new ArrayList<TradeTest>());
     	}
     	
     	return "tradelist";
     }
-    
-    @GetMapping("/mypage/tradelist/buy")
-    public String tradeBuyList(Model model) throws Exception {
-    	SiteUser currentUser = userService.getCurrentUser();
-    	
-    	if (currentUser != null) {
-    		String currentUsername = currentUser.getUsername();
-    		
-    		List<TradeTest> tradeBuyList = new ArrayList<>();
-    		tradeBuyList = tradeTestRepository.tradeBuyList(currentUsername);
-    		model.addAttribute("tradeBuyList", tradeBuyList);
-    		
-    	} else {
-    		model.addAttribute("tradeBuyList", new TradeTest());
-    	}
-    	
-    	return "tradelist :: tradeBuyTable";
-    }
-    
-    @GetMapping("/mypage/tradelist/buy/tradebuylist")
-    public List<TradeTest> getTradeList(@RequestParam String currentUsername) throws Exception {
-    	List<TradeTest> tradeList = tradeTestRepository.tradeBuyList(currentUsername);
-		return tradeList;
-    }
-    
-    @GetMapping("/mypage/tradelist/sell")
-    public String tradeSellList(Model model) throws Exception {
-    	SiteUser currentUser = userService.getCurrentUser();
-    	
-    	if (currentUser != null) {
-    		String currentUsername = currentUser.getUsername();
-    		
-    		List<TradeTest> tradeSellList = new ArrayList<>();
-    		tradeSellList = tradeTestRepository.tradeSellList(currentUsername);
-    		model.addAttribute("tradeSellList", tradeSellList);
-    		
-    	} else {
-    		model.addAttribute("tradeSellList", new TradeTest());
-    	}
-    	
-    	return "tradelist :: tradeSellTable";
-    }
-    
-//    @GetMapping("/coin/prices") // AJAX 구현을 위한 Price 데이터 전달 메소드
-//	public String getCoinPrices(Model model, @RequestParam String coinCode) throws Exception {
-//		List<Prices> priceList = new ArrayList<>();
-//		priceList = webPageService.findPriceList(coinCode); // 코인코드를 파라미터로 받아, DB 조회 후 가격 정보를 전달
-//		model.addAttribute("priceList", priceList);
-//		return "crytotest :: priceTable"; // thymeleaf AJAX 구현을 위해, 데이터가 변경될 떄 " :: ID" 추가
-//	}
-//
-//    @GetMapping("/coin/prices/priceslist") // AJAX 구현을 위한 Price 데이터 전달 메소드
-//    @ResponseBody // JSON 데이터를 반환하므로 @ResponseBody 어노테이션 추가
-//    public List<Prices> getCoinPricesList(@RequestParam String coinCode) throws Exception {
-//        List<Prices> priceList = webPageService.findPriceList(coinCode); // 코인코드를 파라미터로 받아, DB 조회 후 가격 정보를 전달
-//        return priceList;
-//    }
     
 }

@@ -1,19 +1,32 @@
 <html layout:decorate="~{layout}">
     <div layout:fragment="content" class="container">
-        <table id="tradeBuyTable" th:fragment="tradeBuyTable">
+		<div id="contents">
+		<h2 class="title" th:text="${currentUsername} + '님의 거래내역'"></h2>
+		<button class="ab_r btn btn_gray_line_s" onclick="location.href='/mypage/tradelist/all'">전체</button>
+	    <button class="ab_r btn btn_org_line_s" onclick="location.href='/mypage/tradelist/buy'">매수</button>
+	    <button class="ab_r btn btn_blue_line_s" onclick="location.href='/mypage/tradelist/sell'">매도</button>
+	    
+        <table id="tradeTable" th:fragment="tradeTable">
 			<tr>
+				<th>거래형식</th>
 				<th>코인</th>
-				<th>구매가격</th>
-				<th>구매개수</th>
+				<th>가격</th>
+				<th>개수</th>
 				<th>코인가격</th>
 				<th>구매시간</th>
 			</tr>
 			<tr th:each="trade : ${tradeList}">
+				<td class="tradeType">
+					<span th:if="${trade.tradeType == 1}">매수</span>
+    				<span th:if="${trade.tradeType == 2}">매도</span>
+				</td>
 				<td class="tradeCoincode" th:text="${trade.coincode}"></td>
-				<td class="tradePrice" th:text="${trade.tradePrice}" />
-				<td class="tradeItem" th:text="${trade.tradeItem}" />
-				<td class="tradeCoinMoney" th:text="${trade.tradeCoinMoney}" />
+				<td class="tradePrice" th:text="${#numbers.formatInteger(trade.tradePrice, 0, 'COMMA')}" />
+				<td class="tradeItem" th:text="${#numbers.formatDecimal(trade.tradeItem, 1, 5)}" />
+				<td class="tradeCoinMoney" th:text="${#numbers.formatInteger(trade.tradeCoinMoney, 0, 'COMMA')}" />
 				<td class="tradeDate" th:text="${#temporals.format(trade.date, 'MM.dd HH:mm')}" />
 			</tr>
+        </table>
+        </div>
     </div>
 </html>
