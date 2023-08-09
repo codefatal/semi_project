@@ -54,3 +54,20 @@ th, td {
 .container {
     overflow: hidden;
 }
+
+table#rankingTable {
+	background-color: #FFF;
+	padding: 10px;
+}
+
+table#rankingTable th {
+	background-color: #ccc;
+	font-weight: bold;
+	vertical-align: middle;
+}
+
+table#rankingTable th, table#rankingTable td {
+	border: 1px solid #000;
+	text-align: center;
+	padding: 5px;
+}
