@@ -44,7 +44,7 @@ $(document).ready(function() {
 	
 	function continueHandleCoinSelection() {
 	    // 선택한 코인의 이름을 가져옵니다.
-        const selectedCoinName = $('#coinSelect').find('option:selected').text() ?? "BTC";
+        const selectedCoinName = $('#coinSelect').find('option:selected').text() ?? "비트코인";
         const selectedCoinCode = coinMapping[selectedCoinName] ?? "BTC";
         const selectedCoin = $('#coinSelect').val() ?? "BTC";
         updateCoinValueDisplay(selectedCoin);
@@ -65,12 +65,14 @@ $(document).ready(function() {
         $('.Button_text_buy').text(selectedCoinCode + ' 매수');
         $('.Button_text_sell').text(selectedCoinCode + ' 매도');
         
+        
         let maxQuantitySell;
         if (selectedCoinCode === "BTC") {
 	        maxQuantitySell = myPageData.userBtc * priceLista[0].price;
 	    } else if (selectedCoinCode === "ETH") {
 	        maxQuantitySell = myPageData.userEth * priceListb[0].price;
 	    }
+	    
 	    const truncatedSell = Math.floor(maxQuantitySell * Math.pow(10, 5)) / Math.pow(10, 5);
 	    $('.maxQuantitySell').text(truncatedSell);
 	    
@@ -132,8 +134,8 @@ $(document).ready(function() {
 		        coinCode: "BTC"  // 여기에 적절한 코인 코드 값을 입력해주세요.
 		    },
 		    success: function(response) {
-		        updatePageWithPriceList(response);
 		        priceLista = response;
+		        updatePageWithPriceList(response);
 		        continueHandleCoinSelection();
 		    },
 		    error: function(xhr, status, error) {
@@ -152,8 +154,8 @@ $(document).ready(function() {
 		        coinCode: "ETH"  // 여기에 적절한 코인 코드 값을 입력해주세요.
 		    },
 		    success: function(response) {
-		        updatePageWithPriceList(response);
 		        priceListb = response;
+		        updatePageWithPriceList(response);
 		        continueHandleCoinSelection();
 		    },
 		    error: function(xhr, status, error) {
@@ -192,7 +194,8 @@ $(document).ready(function() {
             $(this).parent().attr('aria-selected', true);  // 클릭한 탭 아이템만 aria-selected 값을 true로 설정
         } else if (selectedTab === 'sell') {
             // 매도 버튼을 클릭했을 때의 처리
-            // 필요한 처리를 추가
+            $('.Orders_tabitem').attr('aria-selected', false);  // 모든 탭 아이템의 aria-selected 값을 false로 설정
+            $(this).parent().attr('aria-selected', true);  // 클릭한 탭 아이템만 aria-selected 값을 true로 설정
         }
     });
     
@@ -202,8 +205,39 @@ $(document).ready(function() {
     }
 	
 	// AJAX 요청을 보내서 priceList를 가져옵니다. 
-    function setOrderPercentage(priceList, percentage) {
+    function setOrderPercentage(percentage) {
 		const selectedCoinCode = $(".coinSelect").val() ?? "BTC";
+		if(selectedCoinCode === "BTC") {
+			$.ajax({
+			    url: "/coin/prices/priceslist",
+			    type: "GET",
+			    dataType: "json",
+			    data: {
+			        coinCode: "BTC"  // 여기에 적절한 코인 코드 값을 입력해주세요.
+			    },
+			    success: function(response) {
+			        priceLista = response;
+			    },
+			    error: function(xhr, status, error) {
+			        console.error("Error occurred while fetching priceList:", error);
+			    }
+			});
+		} else if(selectedCoinCode === "ETH") {
+			$.ajax({
+			    url: "/coin/prices/priceslist",
+			    type: "GET",
+			    dataType: "json",
+			    data: {
+			        coinCode: "ETH"  // 여기에 적절한 코인 코드 값을 입력해주세요.
+			    },
+			    success: function(response) {
+			        priceListb = response;
+			    },
+			    error: function(xhr, status, error) {
+			        console.error("Error occurred while fetching priceList:", error);
+			    }
+			});
+		}
         let maxOrderQuantity;
 
         // 현재 선택된 탭을 확인
@@ -211,7 +245,13 @@ $(document).ready(function() {
         
         if (selectedTab === 'buy') {
             // 매수일 때의 계산
-            maxOrderQuantity = myPageData.money / priceList[0].price;
+            if (selectedCoinCode === "BTC") {
+            	maxOrderQuantity = myPageData.money / priceLista[0].price;
+            	priceList = priceLista;
+		    } else if (selectedCoinCode === "ETH") {
+		        maxOrderQuantity = myPageData.money / priceListb[0].price;
+            	priceList = priceListb;
+		    }            	
         } else {
             // 매도일 때의 계산
             if (selectedCoinCode === "BTC") {
@@ -232,24 +272,21 @@ $(document).ready(function() {
     // 페이지 업데이트 함수
     function updatePageWithPriceList(priceList) {
         // 주문 수량 입력란에 내용이 변경될 때마다 주문 금액을 업데이트하는 이벤트 리스너 등록
-        $('.orderQuantityInput').on('input', function() {
+        $('.orderQuantityInput').off('input').on('input', function() {
 		    calculateOrderAmount(priceList);
 		});
 
         // 주문 퍼센트 버튼 클릭 시 주문 수량 및 주문 금액을 업데이트하는 이벤트 리스너 등록
-		$('.OrderForm_qty-per_btn').on('click', function() {
+		$('.OrderForm_qty-per_btn').off('click').on('click', function() {
             const percentage = parseInt($(this).data('percentage'));
-            setOrderPercentage(priceList, percentage);
+            setOrderPercentage(percentage);
         });
-
-        // 초기에 주문 금액을 계산하여 업데이트합니다.
-        calculateOrderAmount(priceList);
     }
 
     // 주문 금액 계산 함수
     function calculateOrderAmount(priceList) {
         const orderQuantity = parseFloat($('#orderQuantitySecondary').val()) || 0; // 주문 수량 값을 가져옵니다. 값이 없거나 NaN이면 0으로 설정
-    	const pricePer = priceList[0] && priceList[0].price ? priceList[0].price : 0; // 코인C 금액을 가져옵니다. 값이 없으면 0으로 설정
+    	const pricePer = priceList[0] && priceList[0].price ? priceList[0].price : 0; // 코인 금액을 가져옵니다. 값이 없으면 0으로 설정
 
         // 주문 금액을 계산합니다.
 	    const orderAmount = orderQuantity * pricePer;
