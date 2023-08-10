@@ -92,7 +92,6 @@ $(document).ready(function() {
     
     function fetchPriceListBasedOnSelectedCoin() {
 	    const selectedCoin = $(".coinSelect").val() ?? "BTC";
-	    console.log(selectedCoin);
 	    
 	    switch(selectedCoin) {
 	        case 'BTC':

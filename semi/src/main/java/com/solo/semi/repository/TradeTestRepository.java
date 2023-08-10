@@ -35,6 +35,7 @@ public interface TradeTestRepository extends CrudRepository<TradeTest, String> {
 	@Query("SELECT nvl(avg(tradeCoinMoney),0) from TradeTest tt where tt.coincode = :coincode AND tt.username = :username AND tt.tradeType = 1")
 	Double buyCoinAvg(@Param("coincode") String coincode, @Param("username") String username);
 	
+	// 전체 거래내역
 	@Query("SELECT tt FROM TradeTest tt WHERE tt.username = :username ORDER BY tt.date DESC")
 	List<TradeTest> tradeList(@Param("username") String username);
 	
@@ -47,17 +48,17 @@ public interface TradeTestRepository extends CrudRepository<TradeTest, String> {
 	List<TradeTest> tradeSellList(@Param("username") String username);
 	
 	// 랭킹 평가 손익 내림차순 계산
-	@Query("SELECT tt.username, " +
-		       "(COALESCE(SUM(CASE WHEN tt.tradeType = 1 THEN tt.tradePrice ELSE 0 END), 0)) AS buySum, " +
-		       "(COALESCE(SUM(CASE WHEN tt.tradeType = 1 THEN tt.tradePrice ELSE 0 END), 0) - " +
-		       " COALESCE(SUM(CASE WHEN tt.tradeType = 2 THEN tt.tradePrice ELSE 0 END), 0)) AS profitLoss, " +
-		       "p.price AS currentPrice, " +
-		       "(p.price * COALESCE(SUM(tt.tradeItem), 0)) - (COALESCE(SUM(CASE WHEN tt.tradeType = 1 THEN tt.tradePrice ELSE 0 END), 0)) AS evaluationProfitLoss " +
-		       "FROM TradeTest tt " +
-		       "JOIN Prices p ON p.coincode = tt.coincode " +  
-		       "WHERE tt.coincode = :coincode " +
-		       "AND p.date = (SELECT MAX(p2.date) FROM Prices p2 WHERE p2.coincode = :coincode) " + 
-		       "GROUP BY tt.username, p.price " +
-		       "ORDER BY evaluationProfitLoss DESC")  // 평가 손익을 기준으로 정렬
+		@Query("SELECT tt.username, " +
+			       "(COALESCE(SUM(CASE WHEN tt.tradeType = 1 THEN tt.tradePrice ELSE 0 END), 0)) AS buySum, " +
+			       "(COALESCE(SUM(CASE WHEN tt.tradeType = 1 THEN tt.tradePrice ELSE 0 END), 0) - " +
+			       " COALESCE(SUM(CASE WHEN tt.tradeType = 2 THEN tt.tradePrice ELSE 0 END), 0)) AS profitLoss, " +
+			       "p.price AS currentPrice, " +
+			       "(p.price * COALESCE(SUM(tt.tradeItem), 0)) - (COALESCE(SUM(CASE WHEN tt.tradeType = 1 THEN tt.tradePrice ELSE 0 END), 0)) AS evaluationProfitLoss " +
+			       "FROM TradeTest tt " +
+			       "JOIN Prices p ON p.coincode = tt.coincode " +  
+			       "WHERE tt.coincode = :coincode " +
+			       "AND p.date = (SELECT MAX(p2.date) FROM Prices p2 WHERE p2.coincode = :coincode) " + 
+			       "GROUP BY tt.username, p.price " +
+			       "ORDER BY evaluationProfitLoss DESC")  // 평가 손익을 기준으로 정렬
 		List<Object[]> getRankingByCoin(@Param("coincode") String coincode);
 }

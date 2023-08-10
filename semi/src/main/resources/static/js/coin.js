@@ -63,11 +63,10 @@ function getCoinCode() {
   return cd;
 }
 
-window.onload = function() {
+if ($(location).attr('pathname') === '/coin') {
     priceAjax();
     
     document.getElementById("coinSelect").addEventListener('change', priceAjax);
-
 }
 
 function drawChart () { // 차트를 그리기 위한 함수
