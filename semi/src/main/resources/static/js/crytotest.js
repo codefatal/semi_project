@@ -3,17 +3,22 @@ $(document).ready(function() {
     let priceLista = {};
     let priceListb = {};
     let coinMapping = {};
-    
-    
+
     const savedCoinCode = localStorage.getItem('selectedCoinCode') ?? "BTC";
-	
-	if (savedCoinCode) {
-        $('#coinSelect').val(savedCoinCode).trigger('change');
-	}
-	
-	console.log("Document is ready!");
-	handleCoinSelection();
-	
+    
+    // 모의투자 페이지에서만 실행
+    if ($(location).attr('pathname') === '/coin') {
+		if (savedCoinCode) {
+     	   $('#coinSelect').val(savedCoinCode).trigger('change');
+		}
+		handleCoinSelection();
+		
+	    $(document).on('change', '#coinSelect', handleCoinSelection);
+    
+	    function handleCoinSelection() {
+		    fetchPriceListBasedOnSelectedCoin();
+		}
+    }
 	
     // myPage 정보를 가져오는 AJAX 요청
     $.ajax({
@@ -21,7 +26,6 @@ $(document).ready(function() {
         type: "GET",
         dataType: "json",
         success: function(response) {
-			console.log(response)
             myPageData = response;
             
             // myPageData 설정 후 priceList 요청 시작
@@ -35,12 +39,6 @@ $(document).ready(function() {
             }
         }
     });
-    
-    $(document).on('change', '#coinSelect', handleCoinSelection);
-    
-    function handleCoinSelection() {
-	    fetchPriceListBasedOnSelectedCoin();
-	}
 	
 	function continueHandleCoinSelection() {
 	    // 선택한 코인의 이름을 가져옵니다.
@@ -77,7 +75,7 @@ $(document).ready(function() {
 	    $('.maxQuantitySell').text(truncatedSell);
 	    
 	    resetOrderInputs();
-	    localStorage.setItem('selectedCoinCode', selectedCoinCode);
+	    localStorage.setItem('selectedCoinCode', selectedCoin);
 	    
 	    $.ajax({
 	        url: "/maxquantity",
@@ -94,6 +92,7 @@ $(document).ready(function() {
     
     function fetchPriceListBasedOnSelectedCoin() {
 	    const selectedCoin = $(".coinSelect").val() ?? "BTC";
+	    console.log(selectedCoin);
 	    
 	    switch(selectedCoin) {
 	        case 'BTC':
@@ -205,7 +204,8 @@ $(document).ready(function() {
     }
 	
 	// AJAX 요청을 보내서 priceList를 가져옵니다. 
-    function setOrderPercentage(percentage) {
+    function setOrderPercentage(priceList, percentage) {
+		console.log(priceList[0].coincode);
 		const selectedCoinCode = $(".coinSelect").val() ?? "BTC";
 		if(selectedCoinCode === "BTC") {
 			$.ajax({
@@ -242,15 +242,12 @@ $(document).ready(function() {
 
         // 현재 선택된 탭을 확인
         const selectedTab = $('.Orders_tabitem[aria-selected="true"]').children('.Orders_tabbtn').data('tab');
-        
         if (selectedTab === 'buy') {
             // 매수일 때의 계산
             if (selectedCoinCode === "BTC") {
             	maxOrderQuantity = myPageData.money / priceLista[0].price;
-            	priceList = priceLista;
 		    } else if (selectedCoinCode === "ETH") {
 		        maxOrderQuantity = myPageData.money / priceListb[0].price;
-            	priceList = priceListb;
 		    }            	
         } else {
             // 매도일 때의 계산
@@ -279,12 +276,13 @@ $(document).ready(function() {
         // 주문 퍼센트 버튼 클릭 시 주문 수량 및 주문 금액을 업데이트하는 이벤트 리스너 등록
 		$('.OrderForm_qty-per_btn').off('click').on('click', function() {
             const percentage = parseInt($(this).data('percentage'));
-            setOrderPercentage(percentage);
+            setOrderPercentage(priceList, percentage);
         });
     }
 
     // 주문 금액 계산 함수
     function calculateOrderAmount(priceList) {
+		console.log(priceList);
         const orderQuantity = parseFloat($('#orderQuantitySecondary').val()) || 0; // 주문 수량 값을 가져옵니다. 값이 없거나 NaN이면 0으로 설정
     	const pricePer = priceList[0] && priceList[0].price ? priceList[0].price : 0; // 코인 금액을 가져옵니다. 값이 없으면 0으로 설정
 
@@ -479,10 +477,6 @@ $(document).ready(function() {
             }
         });
 
-        // 업데이트된 값을 콘솔에 출력합니다 (데모용).
-        console.log("Updated myPage data:", myPageData);
-
-        // 여기서 필요한 경우 서버에 업데이트된 데이터를 저장하거나 페이지를 갱신할 수 있습니다.
     });
     
     // 전체수익률
@@ -525,7 +519,10 @@ $(document).ready(function() {
 	    }
 	});
 	
-	fetchRankingData('BTC'); // 페이지 로딩 시 BTC 데이터로 테이블을 채웁니다.
+	// 메인페이지에서만 실행
+	if ($(location).attr('pathname') === '/') {
+       fetchRankingData('BTC'); // 페이지 로딩 시 BTC 데이터로 테이블을 채웁니다.
+    }
 	
 	$('#sortByBtc').click(function() {
         fetchRankingData('BTC');
