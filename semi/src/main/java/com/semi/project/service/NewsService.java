@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+// 뉴스 크롤링 서비스(트레이딩뷰 뉴스 흐름)
 @RequiredArgsConstructor
 @Service
 public class NewsService {

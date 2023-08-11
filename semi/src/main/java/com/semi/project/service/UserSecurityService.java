@@ -23,7 +23,8 @@ import lombok.RequiredArgsConstructor;
 public class UserSecurityService implements UserDetailsService {
 
     private final UserRepository userRepository;
-
+    
+    // 로그인 시 사용자 계정이 있는지 체크 및 admin 계정인 경우 admin 권한 그 외 계정은 user권한 부여
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<SiteUser> _siteUser = this.userRepository.findByUsername(username);

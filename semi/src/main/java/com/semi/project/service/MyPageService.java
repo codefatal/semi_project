@@ -25,7 +25,8 @@ public class MyPageService {
         this.myPageRepository = myPageRepository;
         this.userService = userService;
     }
-
+    
+    
     public Double getMoneyForCurrentUser() {
         SiteUser currentUser = userService.getCurrentUser();
 
@@ -42,11 +43,12 @@ public class MyPageService {
         return 0.0; // 사용자 정보를 찾지 못하거나, MyPage 정보를 찾지 못한 경우 기본값으로 0 반환
     }
     
+    // 모의투자 랭킹산정을 위한 dto 병합
     public CombinedData getCombinedData(String username) {
     	Optional<TradeTest> tradeTestData = tradeTestRepository.findTopByUsernameOrderByDateDesc(username);
         Optional<MyPage> myPageData = myPageRepository.findByUsername(username);
 
-        return new CombinedData(tradeTestData, myPageData); // 병합된 데이터를 반환하는 DTO
+        return new CombinedData(tradeTestData, myPageData);
     }
 
 }

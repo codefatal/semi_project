@@ -23,7 +23,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final MyPageRepository myPageRepository;
     private final PasswordEncoder passwordEncoder;
-
+    
     public SiteUser getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -36,6 +36,7 @@ public class UserService {
         return userOptional.orElse(null);
     }
     
+    // 회원가입 시 site_user 테이블과 mypage 테이블에 정보 저장
     @Transactional
     public SiteUser create(String username, String email, String password) {
         SiteUser user = new SiteUser();

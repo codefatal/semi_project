@@ -11,6 +11,7 @@ import com.semi.project.repository.TradeTestRepository;
 
 import lombok.RequiredArgsConstructor;
 
+
 @RequiredArgsConstructor
 @Service
 @Transactional
@@ -18,7 +19,8 @@ public class TradeTestService {
 	
 	private final TradeTestRepository tradeTestRepository;
 	private final UserService userService;
-	
+
+	// 매수/매도 진행 시 거래내역 정보 trade_test 테이블에 저장
 	public TradeTest tradeTestLog(String coinCode, int tradeType, double orderamount, double tradeItem, double price) {
 		SiteUser currentUser = userService.getCurrentUser();
 		TradeTest trade = new TradeTest();
