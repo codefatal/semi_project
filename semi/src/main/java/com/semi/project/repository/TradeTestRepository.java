@@ -16,7 +16,6 @@ public interface TradeTestRepository extends CrudRepository<TradeTest, String> {
 	
 	Optional<TradeTest> findTopByUsernameOrderByDateDesc(String currentUsername);
 	
-	
 	//전체 계산
 	@Query("SELECT (COALESCE(SUM(CASE WHEN tt.tradeType = 1 THEN tt.tradePrice ELSE 0 END), 0)"
 			+ " - COALESCE(SUM(CASE WHEN tt.tradeType = 2 THEN tt.tradePrice ELSE 0 END), 0)) AS result"

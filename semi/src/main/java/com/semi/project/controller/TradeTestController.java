@@ -22,7 +22,6 @@ import com.semi.project.model.CombinedData;
 import com.semi.project.model.MyPage;
 import com.semi.project.model.Prices;
 import com.semi.project.model.SiteUser;
-import com.semi.project.model.TradeTest;
 import com.semi.project.model.UserRanking;
 import com.semi.project.repository.MyPageRepository;
 import com.semi.project.repository.PricesRepository;
@@ -36,15 +35,12 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Controller
-public class CoinwebController {
+public class TradeTestController {
 	
 	private final WebPageService webPageService;
 	private final UserService userService;
 	private final TradeTestService tradeTestService;
-	private final MyPageService myPageService;
 	private final MyPageRepository myPageRepository;
-	private final TradeTestRepository tradeTestRepository;
-	private final PricesRepository pricesRepository;
 	
 	// 모의투자 페이지
 	@GetMapping("/coin")
@@ -238,134 +234,4 @@ public class CoinwebController {
         }
     }
     
-    // 마이페이지 접속
-    @GetMapping("/mypage")
-    public String trade(Model model) throws Exception {
-    	List<Coins> coinList = webPageService.findAllCoins();
-        model.addAttribute("coinList", coinList);
-        
-        SiteUser currentUser = userService.getCurrentUser();
-
-        if (currentUser != null) {
-            String currentUsername = currentUser.getUsername();
-            Optional<MyPage> myPageOptional = myPageRepository.findByUsername(currentUsername);
-            MyPage myPage = myPageOptional.orElse(new MyPage());
-            // 전체 계산
-            Double sumTradePrice = tradeTestRepository.buySum(currentUsername);
-            model.addAttribute("sumTradePrice", sumTradePrice);
-            
-            for (Coins coin : coinList) {
-                List<Prices> priceList = webPageService.findPriceList(coin.getCoincode());
-                model.addAttribute(coin.getCoincode() + "priceList", priceList);
-            }
-            
-            // BTC 계산
-            String BTC = "BTC";
-            Double sumBtcTradePrice = tradeTestRepository.buyCoinSum(BTC, currentUsername);
-            model.addAttribute("sumBtcTradePrice", sumBtcTradePrice);
-            Double avgBtcTradePrice = tradeTestRepository.buyCoinAvg(BTC, currentUsername);
-            model.addAttribute("avgBtcTradePrice", avgBtcTradePrice);
-            
-            // ETH 계산
-            String ETH = "ETH";
-            Double sumEthTradePrice = tradeTestRepository.buyCoinSum(ETH, currentUsername);
-            model.addAttribute("sumEthTradePrice", sumEthTradePrice);
-            Double avgEthTradePrice = tradeTestRepository.buyCoinAvg(ETH, currentUsername);
-            model.addAttribute("avgEthTradePrice", avgEthTradePrice);
-
-            model.addAttribute("myPage", myPage);
-        } else {
-            model.addAttribute("myPage", new MyPage()); // 미인증 사용자인 경우 빈 MyPage 객체를 추가
-        }
-
-    	return "mypage";
-    }
-    
-    // 마이페이지 -> 거래내역에서 버튼을 클릭했을때
-    @GetMapping("/mypage/tradelist/{type}")
-    public String tradeBuyList(@PathVariable String type, Model model) throws Exception {
-    	SiteUser currentUser = userService.getCurrentUser();
-    	
-    	if (currentUser != null) {
-    		String currentUsername = currentUser.getUsername();
-    		
-    		List<TradeTest> tradeList = new ArrayList<>();
-    		
-    		switch(type) {
-	            case "all":
-	            	tradeList = tradeTestRepository.tradeList(currentUsername);
-	                break;
-	            case "buy":
-	            	tradeList = tradeTestRepository.tradeBuyList(currentUsername);
-	                break;
-	            case "sell":
-	            	tradeList = tradeTestRepository.tradeSellList(currentUsername);
-	                break;
-	            default:
-	                // Handle unknown type
-	                break;
-    		}
-    		model.addAttribute("tradeList", tradeList);
-    		model.addAttribute("currentUsername", currentUsername);
-    	} else {
-    		model.addAttribute("tradeList", new ArrayList<TradeTest>());
-    	}
-    	
-    	return "tradelist";
-    }
-    
-    // 모의투자 랭킹 데이터 전달
-    @GetMapping("/api/ranking/{coinCode}")
-    public ResponseEntity<List<UserRanking>> getRankingByCurrency(@PathVariable String coinCode) {
-    	List<Object[]> results;
-    	if ("BTC".equals(coinCode)) {
-    		results = tradeTestRepository.getRankingByBTC(coinCode);    		
-    	} else {
-    		results = tradeTestRepository.getRankingByETH(coinCode);
-    	}
-        
-        List<UserRanking> rankingList = new ArrayList<>();
-
-        Double currentCoinPrice = pricesRepository.findTopByCoincodeOrderByDateDesc(coinCode).getPrice();
-
-        for (Object[] result : results) {
-            String username = (String) result[0];
-            Double profitLoss = (Double) result[2];
-            
-            CombinedData combinedData = myPageService.getCombinedData(username);
-
-            Optional<MyPage> myPageData = combinedData.getMyPage();
-            MyPage myPage = myPageData.get(); 
-
-            Double sumBtcTradePrice = 0.0;
-            Double sumEthTradePrice = 0.0;
-            
-            if ("BTC".equals(coinCode)) {
-                sumBtcTradePrice = tradeTestRepository.buyCoinSum("BTC", username);
-            } else {
-                sumEthTradePrice = tradeTestRepository.buyCoinSum("ETH", username);
-            }
-
-            Double evaluationAmount = (coinCode.equals("BTC") ? sumBtcTradePrice : sumEthTradePrice) * currentCoinPrice;
-            Double profitRate = (profitLoss / (coinCode.equals("BTC") ? sumBtcTradePrice : sumEthTradePrice)) * 100;
-
-            UserRanking ranking = new UserRanking(username, evaluationAmount, profitLoss, profitRate);
-            ranking.setSumBtcTradePrice(sumBtcTradePrice);
-            ranking.setSumEthTradePrice(sumEthTradePrice);
-            
-            if(myPageData != null) {
-                Double userBtc = myPage.getUserBtc();
-                Double userEth = myPage.getUserEth();
-
-                // 여기서 userBtc와 userEth를 사용하여 필요한 계산을 수행합니다.
-                ranking.setUserBtc(userBtc);
-                ranking.setUserEth(userEth);
-            }
-
-            rankingList.add(ranking);
-        }
-
-        return ResponseEntity.ok(rankingList);
-    }
-       
 }
