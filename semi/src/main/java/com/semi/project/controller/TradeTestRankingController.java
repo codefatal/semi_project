@@ -30,6 +30,11 @@ public class TradeTestRankingController {
 	private final TradeTestRepository tradeTestRepository;
 	private final PricesRepository pricesRepository;
 	
+	@GetMapping("/coin/ranking")
+	public String coinRanking() {
+		return "tradetest_ranking";
+	}
+	
 	// 모의투자 랭킹 데이터 전달
     @GetMapping("/api/ranking/{coinCode}")
     public ResponseEntity<List<UserRanking>> getRankingByCurrency(@PathVariable String coinCode) {

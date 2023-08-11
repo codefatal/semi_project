@@ -1,0 +1,27 @@
+<html layout:decorate="~{layout}">
+	<div layout:fragment="content" class="container">
+		<h2 class="title">모의투자 랭킹 > </h2>
+		<button id="sortByBtc" class="btn_gray_s">BTC 랭킹</button>
+		<button id="sortByEth" class="btn_gray_s">ETH 랭킹</button>
+		<table id="rankingTable" th:fragment="rankingTable">
+		    <thead>
+		        <tr>
+		            <th>랭킹</th>
+		            <th>사용자명</th>
+		            <th>평가금액</th>
+		            <th>평가손익</th>
+		            <th>수익율</th>
+		        </tr>
+		    </thead>
+		    <tbody>
+		        <tr th:each="ranking, stat : ${rankingList}">
+		            <td th:text="${stat.count + 1}"></td>
+		            <td th:text="${ranking.username}"></td>
+		            <td th:text="${#numbers.formatDecimal(ranking.evaluationAmount, 0, 'COMMA')} + ' 원'"></td>
+		            <td th:text="${#numbers.formatDecimal(ranking.profitLoss, 0, 'COMMA')} + ' 원'"></td>
+		            <td th:text="${#numbers.formatDecimal(ranking.profitRate, 0, 'COMMA')} + ' %'"></td>
+		        </tr>
+		    </tbody>
+		</table>
+	</div>
+</html>

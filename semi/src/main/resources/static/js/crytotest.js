@@ -519,7 +519,7 @@ $(document).ready(function() {
 	});
 	
 	// 메인페이지에서만 실행
-	if ($(location).attr('pathname') === '/') {
+	if ($(location).attr('pathname') === '/coin/ranking') {
        fetchRankingData('BTC'); // 페이지 로딩 시 BTC 데이터로 테이블을 채웁니다.
     }
 	
