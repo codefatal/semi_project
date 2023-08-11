@@ -317,7 +317,13 @@ public class CoinwebController {
     // 모의투자 랭킹 데이터 전달
     @GetMapping("/api/ranking/{coinCode}")
     public ResponseEntity<List<UserRanking>> getRankingByCurrency(@PathVariable String coinCode) {
-        List<Object[]> results = tradeTestRepository.getRankingByCoin(coinCode);
+    	List<Object[]> results;
+    	if ("BTC".equals(coinCode)) {
+    		results = tradeTestRepository.getRankingByBTC(coinCode);    		
+    	} else {
+    		results = tradeTestRepository.getRankingByETH(coinCode);
+    	}
+        
         List<UserRanking> rankingList = new ArrayList<>();
 
         Double currentCoinPrice = pricesRepository.findTopByCoincodeOrderByDateDesc(coinCode).getPrice();
@@ -354,7 +360,6 @@ public class CoinwebController {
                 // 여기서 userBtc와 userEth를 사용하여 필요한 계산을 수행합니다.
                 ranking.setUserBtc(userBtc);
                 ranking.setUserEth(userEth);
-                // 예: ranking.setUserBtc(userBtc); ranking.setUserEth(userEth);
             }
 
             rankingList.add(ranking);
