@@ -2329,7 +2329,6 @@ ul {
   /* line 112, /Applications/MAMP/htdocs/palash/cl/july 2019/193 Travel/193 travel html/sass/_menu.scss */
   .navbar-collapse {
     z-index: 9999 !important;
-    position: absolute;
     left: 0;
     top: 65px;
     width: 100%;
