@@ -42,6 +42,9 @@ public class SavePriceService {
 	private void initDelAllPrices() throws Exception {
 		log.info("[initDelAllPrices] 프로그램 최초 실행 시, 기존 Price 데이터 삭제(지운 데이터): " + pricesRepository.count() + ")");
 		pricesRepository.deleteAll();
+		
+		// 바로 데이터를 한번 불러오는 코드 추가
+		savePriceEvery1min();
 	}
 	
 	// 1분마다 코인의 가격과 거래량 정보를 저장
