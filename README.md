@@ -25,10 +25,10 @@
 |FrontEnd|HTML5, CSS, JavaScript, JQuery, Bootstrap|
 |BackEnd|Java(JDK 11), SpringBoot(2.7.14)|
 |OS|Windows 10|
-|IDE|SpringToolSuite4, VSCode|
+|IDE|SpringToolSuite4, VSCode, SQL Developer|
 |Server|Tomcat 9.0|
 |CI|Github|
-|DateBase|SQL Developer, Oracle(21c)|
+|DateBase|Oracle(21c)|
 |API|Bithumb API, TradingView Widget|
 #
 ## 프로젝트 기능구현
@@ -38,7 +38,13 @@
 - 거래내역 - 매수, 매도 진행 시의 정보를 테이블에 저장하여 거래내역 페이지에서 전체/매수/매도 버튼을 통해 조회 가능
 #
 ## 주요기능
-[발표자료](https://docs.google.com/presentation/d/1_bz8sFVTaePa7R9fB2huYsMGf9IVvGGfLQd0O7OMOJQ/edit#slide=id.g25ded1f5d71_0_83, "발표자료")
+- 뉴스 크롤링
+- 모의투자 매수/매도
+- 마이페이지
+- 거래내역
+#
+## 주요기능
+[발표자료](https://github.com/codefatal/semi_project/blob/main/KCC_%EB%B0%9C%ED%91%9C%EC%9E%90%EB%A3%8C_%EC%9C%A0%EC%88%98%ED%98%84.pdf)
 
 
 
